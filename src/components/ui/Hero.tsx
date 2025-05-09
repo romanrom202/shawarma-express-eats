@@ -10,16 +10,16 @@ const Hero: React.FC = () => {
         <div className="flex flex-col md:flex-row items-center">
           <div className="md:w-1/2 mb-8 md:mb-0">
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-4">
-              Вкус востока<br />к вашему столу
+              Смак сходу<br />до вашого столу
             </h1>
             <p className="text-lg mb-8 max-w-md">
-              Свежие ингредиенты, отменный вкус и быстрая доставка. 
-              Shawarma Express — ваш идеальный выбор для быстрого и вкусного перекуса!
+              Свіжі інгредієнти, чудовий смак та швидка доставка. 
+              Шаурма ТиМаРо — ваш ідеальний вибір для швидкого та смачного перекусу!
             </p>
             <div className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
               <Link to="/menu">
                 <Button className="bg-white text-primary hover:bg-gray-100 font-medium px-6 py-3 rounded-lg w-full sm:w-auto">
-                  Заказать сейчас
+                  Замовити зараз
                 </Button>
               </Link>
               <Link to="/menu">
@@ -38,8 +38,8 @@ const Hero: React.FC = () => {
               />
               <div className="absolute -bottom-6 -right-6 bg-secondary text-secondary-foreground rounded-full p-6 shadow-xl">
                 <div className="text-center">
-                  <p className="font-bold text-2xl">от 199₽</p>
-                  <p className="text-sm">Доставка<br />от 30 мин</p>
+                  <p className="font-bold text-2xl">від 99₴</p>
+                  <p className="text-sm">Доставка<br />від 30 хв</p>
                 </div>
               </div>
             </div>

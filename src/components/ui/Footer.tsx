@@ -11,35 +11,35 @@ const Footer: React.FC = () => {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {/* Contact Info */}
           <div>
-            <h3 className="font-heading text-xl font-bold mb-4 text-secondary">Контакты</h3>
-            <p className="mb-2">Телефон: +7 (999) 123-45-67</p>
-            <p className="mb-2">Email: info@shawarmaexpress.ru</p>
-            <p>Адрес: г. Москва, ул. Шаурменная, д. 42</p>
+            <h3 className="font-heading text-xl font-bold mb-4 text-secondary">Контакти</h3>
+            <p className="mb-2">Телефон: +380 (99) 123-45-67</p>
+            <p className="mb-2">Email: info@timaro.com.ua</p>
+            <p>Адреса: м. Київ, вул. Хрещатик, 22</p>
           </div>
 
           {/* Quick Links */}
           <div>
-            <h3 className="font-heading text-xl font-bold mb-4 text-secondary">Информация</h3>
+            <h3 className="font-heading text-xl font-bold mb-4 text-secondary">Інформація</h3>
             <ul className="space-y-2">
               <li>
-                <Link to="/about" className="hover:text-secondary transition-colors">О нас</Link>
+                <Link to="/about" className="hover:text-secondary transition-colors">Про нас</Link>
               </li>
               <li>
-                <Link to="/delivery" className="hover:text-secondary transition-colors">Доставка и оплата</Link>
+                <Link to="/delivery" className="hover:text-secondary transition-colors">Доставка та оплата</Link>
               </li>
               <li>
-                <Link to="/privacy" className="hover:text-secondary transition-colors">Политика конфиденциальности</Link>
+                <Link to="/privacy" className="hover:text-secondary transition-colors">Політика конфіденційності</Link>
               </li>
               <li>
-                <Link to="/faq" className="hover:text-secondary transition-colors">Частые вопросы</Link>
+                <Link to="/faq" className="hover:text-secondary transition-colors">Часті питання</Link>
               </li>
             </ul>
           </div>
 
           {/* Newsletter */}
           <div>
-            <h3 className="font-heading text-xl font-bold mb-4 text-secondary">Следите за новостями</h3>
-            <p className="mb-4">Подпишитесь на нашу рассылку, чтобы получать новости и специальные предложения</p>
+            <h3 className="font-heading text-xl font-bold mb-4 text-secondary">Слідкуйте за новинами</h3>
+            <p className="mb-4">Підпишіться на нашу розсилку, щоб отримувати новини та спеціальні пропозиції</p>
             <form className="flex">
               <input 
                 type="email" 
@@ -50,14 +50,14 @@ const Footer: React.FC = () => {
                 type="submit" 
                 className="bg-primary hover:bg-primary-dark transition-colors px-4 py-2 rounded-r-md"
               >
-                Подписаться
+                Підписатися
               </button>
             </form>
           </div>
         </div>
 
         <div className="mt-8 pt-6 border-t border-gray-700 text-center">
-          <p>&copy; {currentYear} Shawarma Express. Все права защищены.</p>
+          <p>&copy; {currentYear} Шаурма ТиМаРо. Всі права захищені.</p>
         </div>
       </div>
     </footer>

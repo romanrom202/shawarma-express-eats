@@ -14,7 +14,7 @@ const ProductSearch: React.FC<ProductSearchProps> = ({ searchTerm, onSearchChang
       <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} />
       <Input
         className="pl-10 bg-white border-gray-200"
-        placeholder="Поиск по меню..."
+        placeholder="Пошук по меню..."
         value={searchTerm}
         onChange={(e) => onSearchChange(e.target.value)}
       />

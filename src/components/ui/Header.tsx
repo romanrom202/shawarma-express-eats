@@ -22,17 +22,17 @@ const Header: React.FC = () => {
           {/* Logo */}
           <Link to="/" className="flex items-center">
             <div className="w-10 h-10 rounded-full bg-primary flex items-center justify-center mr-2">
-              <span className="text-white font-bold text-lg">SE</span>
+              <span className="text-white font-bold text-lg">ТМ</span>
             </div>
-            <span className="font-heading font-bold text-xl md:text-2xl text-text">Shawarma Express</span>
+            <span className="font-heading font-bold text-xl md:text-2xl text-text">Шаурма ТиМаРо</span>
           </Link>
 
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center space-x-8">
-            <Link to="/" className="font-medium text-text-muted hover:text-primary transition-colors">Главная</Link>
+            <Link to="/" className="font-medium text-text-muted hover:text-primary transition-colors">Головна</Link>
             <Link to="/menu" className="font-medium text-text-muted hover:text-primary transition-colors">Меню</Link>
-            <Link to="/about" className="font-medium text-text-muted hover:text-primary transition-colors">О нас</Link>
-            <Link to="/contacts" className="font-medium text-text-muted hover:text-primary transition-colors">Контакты</Link>
+            <Link to="/about" className="font-medium text-text-muted hover:text-primary transition-colors">Про нас</Link>
+            <Link to="/contacts" className="font-medium text-text-muted hover:text-primary transition-colors">Контакти</Link>
           </nav>
 
           {/* Actions */}
@@ -54,12 +54,12 @@ const Header: React.FC = () => {
             </Link>
             <Link to="/auth/login">
               <Button variant="outline" size="sm">
-                Войти
+                Увійти
               </Button>
             </Link>
             <Link to="/auth/register">
               <Button className="bg-primary hover:bg-primary-light" size="sm">
-                Регистрация
+                Реєстрація
               </Button>
             </Link>
           </div>
@@ -87,23 +87,23 @@ const Header: React.FC = () => {
           <div className="mt-4 md:hidden animate-fade-in">
             <div className="flex flex-col space-y-4 pb-4">
               <Link to="/" className="px-4 py-2 font-medium text-text-muted hover:text-primary hover:bg-accent rounded-md">
-                Главная
+                Головна
               </Link>
               <Link to="/menu" className="px-4 py-2 font-medium text-text-muted hover:text-primary hover:bg-accent rounded-md">
                 Меню
               </Link>
               <Link to="/about" className="px-4 py-2 font-medium text-text-muted hover:text-primary hover:bg-accent rounded-md">
-                О нас
+                Про нас
               </Link>
               <Link to="/contacts" className="px-4 py-2 font-medium text-text-muted hover:text-primary hover:bg-accent rounded-md">
-                Контакты
+                Контакти
               </Link>
               <hr className="border-t border-gray-200" />
               <Link to="/auth/login" className="px-4 py-2 font-medium text-primary hover:bg-accent rounded-md">
-                Войти
+                Увійти
               </Link>
               <Link to="/auth/register" className="px-4 py-2 bg-primary text-white font-medium rounded-md text-center">
-                Регистрация
+                Реєстрація
               </Link>
             </div>
           </div>
