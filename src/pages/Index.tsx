@@ -1,13 +1,116 @@
-// Update this page (the content is just a fallback if you fail to update the page)
+
+import React from 'react';
+import MainLayout from '@/components/layouts/MainLayout';
+import Hero from '@/components/ui/Hero';
+import ProductCard from '@/components/ui/ProductCard';
+import { Button } from '@/components/ui/button';
+import { Link } from 'react-router-dom';
+import { products } from '@/data/products';
 
 const Index = () => {
+  // Featured products for homepage
+  const featuredProducts = products.slice(0, 4);
+
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <div className="text-center">
-        <h1 className="text-4xl font-bold mb-4">Welcome to Your Blank App</h1>
-        <p className="text-xl text-gray-600">Start building your amazing project here!</p>
-      </div>
-    </div>
+    <MainLayout>
+      <Hero />
+
+      {/* Featured Products */}
+      <section className="py-16 bg-gray-50">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl font-bold text-text mb-2">Популярное меню</h2>
+            <p className="text-text-light max-w-lg mx-auto">
+              Попробуйте наши самые популярные блюда, которые заказывают чаще всего
+            </p>
+          </div>
+          
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+            {featuredProducts.map((product) => (
+              <ProductCard key={product.id} product={product} />
+            ))}
+          </div>
+          
+          <div className="text-center">
+            <Link to="/menu">
+              <Button className="bg-primary hover:bg-primary-dark" size="lg">
+                Смотреть всё меню
+              </Button>
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* Features */}
+      <section className="py-16">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl font-bold text-text mb-2">Почему выбирают нас</h2>
+            <p className="text-text-light max-w-lg mx-auto">
+              Всегда свежие ингредиенты, быстрая доставка и отличное качество
+            </p>
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div className="text-center p-6 rounded-lg bg-white shadow-sm hover:shadow-md transition-shadow">
+              <div className="w-16 h-16 mx-auto mb-4 flex items-center justify-center rounded-full bg-primary/10 text-primary">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+              </div>
+              <h3 className="text-xl font-bold mb-2">Быстрая доставка</h3>
+              <p className="text-text-light">Доставим ваш заказ за 30 минут или бесплатно</p>
+            </div>
+            
+            <div className="text-center p-6 rounded-lg bg-white shadow-sm hover:shadow-md transition-shadow">
+              <div className="w-16 h-16 mx-auto mb-4 flex items-center justify-center rounded-full bg-primary/10 text-primary">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                </svg>
+              </div>
+              <h3 className="text-xl font-bold mb-2">Качество и свежесть</h3>
+              <p className="text-text-light">Используем только свежие продукты высшего качества</p>
+            </div>
+            
+            <div className="text-center p-6 rounded-lg bg-white shadow-sm hover:shadow-md transition-shadow">
+              <div className="w-16 h-16 mx-auto mb-4 flex items-center justify-center rounded-full bg-primary/10 text-primary">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 10h4.764a2 2 0 011.789 2.894l-3.5 7A2 2 0 0115.263 21h-4.017c-.163 0-.326-.02-.485-.06L7 20m7-10V5a2 2 0 00-2-2h-.095c-.5 0-.905.405-.905.905 0 .714-.211 1.412-.608 2.006L7 11v9m7-10h-2M7 20H5a2 2 0 01-2-2v-6a2 2 0 012-2h2.5" />
+                </svg>
+              </div>
+              <h3 className="text-xl font-bold mb-2">Удобный заказ</h3>
+              <p className="text-text-light">Простой и быстрый способ заказа через приложение</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* CTA Section */}
+      <section className="py-16 bg-primary text-white">
+        <div className="container mx-auto px-4">
+          <div className="flex flex-col md:flex-row items-center justify-between">
+            <div className="mb-6 md:mb-0 md:w-1/2">
+              <h2 className="text-3xl font-bold mb-4">Скидка 20% на первый заказ!</h2>
+              <p className="mb-6 text-lg">
+                Зарегистрируйтесь на нашем сайте и получите скидку 20% на первый заказ. Акция действует до конца месяца!
+              </p>
+              <Link to="/auth/register">
+                <Button className="bg-white text-primary hover:bg-gray-100" size="lg">
+                  Зарегистрироваться
+                </Button>
+              </Link>
+            </div>
+            <div className="md:w-1/2 flex justify-center md:justify-end">
+              <img 
+                src="https://images.unsplash.com/photo-1565299585323-38d6b0865b47?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80" 
+                alt="Акция" 
+                className="w-64 h-64 rounded-full object-cover border-4 border-secondary"
+              />
+            </div>
+          </div>
+        </div>
+      </section>
+    </MainLayout>
   );
 };
 
