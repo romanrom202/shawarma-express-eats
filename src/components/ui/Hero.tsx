@@ -23,7 +23,7 @@ const Hero: React.FC = () => {
                 </Button>
               </Link>
               <Link to="/menu">
-                <Button variant="outline" className="border-white text-secondary hover:bg-white/10 font-medium px-6 py-3 rounded-lg w-full sm:w-auto">
+                <Button variant="outline" className="border-white text-primary hover:bg-white/10 font-medium px-6 py-3 rounded-lg w-full sm:w-auto">
                   Меню
                 </Button>
               </Link>
