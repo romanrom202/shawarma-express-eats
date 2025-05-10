@@ -30,8 +30,8 @@ const MenuPage: React.FC = () => {
         <div className="text-center mb-12">
           <h1 className="text-4xl font-bold mb-4">Наше меню</h1>
           <p className="text-text-light max-w-2xl mx-auto">
-            Выберите из широкого ассортимента наших шаурм, закусок и напитков. 
-            Все блюда готовятся из свежих ингредиентов прямо при вас.
+            Оберіть з широкого асортименту наших шаурм, закусок та напоїв. 
+            Усі страви готуються зі свіжих інгредієнтів прямо при вас.
           </p>
         </div>
 
@@ -57,9 +57,9 @@ const MenuPage: React.FC = () => {
           </div>
         ) : (
           <div className="text-center py-16">
-            <h3 className="text-xl font-medium mb-2">Ничего не найдено</h3>
+            <h3 className="text-xl font-medium mb-2">Нічого не знайдено</h3>
             <p className="text-text-light">
-              Попробуйте изменить параметры поиска или выбрать другую категорию
+              Спробуйте змінити параметри пошуку або обрати іншу категорію
             </p>
           </div>
         )}

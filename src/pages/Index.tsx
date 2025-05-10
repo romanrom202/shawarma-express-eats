@@ -19,9 +19,9 @@ const Index = () => {
       <section className="py-16 bg-gray-50">
         <div className="container mx-auto px-4">
           <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-text mb-2">Популярное меню</h2>
+            <h2 className="text-3xl font-bold text-text mb-2">Популярне меню</h2>
             <p className="text-text-light max-w-lg mx-auto">
-              Попробуйте наши самые популярные блюда, которые заказывают чаще всего
+              Спробуйте наші найпопулярніші страви, які замовляють найчастіше
             </p>
           </div>
           
@@ -34,7 +34,7 @@ const Index = () => {
           <div className="text-center">
             <Link to="/menu">
               <Button className="bg-primary hover:bg-primary-dark" size="lg">
-                Смотреть всё меню
+                Дивитися все меню
               </Button>
             </Link>
           </div>
@@ -45,9 +45,9 @@ const Index = () => {
       <section className="py-16">
         <div className="container mx-auto px-4">
           <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-text mb-2">Почему выбирают нас</h2>
+            <h2 className="text-3xl font-bold text-text mb-2">Чому обирають нас</h2>
             <p className="text-text-light max-w-lg mx-auto">
-              Всегда свежие ингредиенты, быстрая доставка и отличное качество
+              Завжди свіжі інгредієнти, швидка доставка та відмінна якість
             </p>
           </div>
           
@@ -58,8 +58,8 @@ const Index = () => {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
               </div>
-              <h3 className="text-xl font-bold mb-2">Быстрая доставка</h3>
-              <p className="text-text-light">Доставим ваш заказ за 30 минут или бесплатно</p>
+              <h3 className="text-xl font-bold mb-2">Швидка доставка</h3>
+              <p className="text-text-light">Доставимо ваше замовлення за 30 хвилин або безкоштовно</p>
             </div>
             
             <div className="text-center p-6 rounded-lg bg-white shadow-sm hover:shadow-md transition-shadow">
@@ -68,8 +68,8 @@ const Index = () => {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
                 </svg>
               </div>
-              <h3 className="text-xl font-bold mb-2">Качество и свежесть</h3>
-              <p className="text-text-light">Используем только свежие продукты высшего качества</p>
+              <h3 className="text-xl font-bold mb-2">Якість та свіжість</h3>
+              <p className="text-text-light">Використовуємо тільки свіжі продукти вищої якості</p>
             </div>
             
             <div className="text-center p-6 rounded-lg bg-white shadow-sm hover:shadow-md transition-shadow">
@@ -78,8 +78,8 @@ const Index = () => {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 10h4.764a2 2 0 011.789 2.894l-3.5 7A2 2 0 0115.263 21h-4.017c-.163 0-.326-.02-.485-.06L7 20m7-10V5a2 2 0 00-2-2h-.095c-.5 0-.905.405-.905.905 0 .714-.211 1.412-.608 2.006L7 11v9m7-10h-2M7 20H5a2 2 0 01-2-2v-6a2 2 0 012-2h2.5" />
                 </svg>
               </div>
-              <h3 className="text-xl font-bold mb-2">Удобный заказ</h3>
-              <p className="text-text-light">Простой и быстрый способ заказа через приложение</p>
+              <h3 className="text-xl font-bold mb-2">Зручне замовлення</h3>
+              <p className="text-text-light">Простий і швидкий спосіб замовлення через додаток</p>
             </div>
           </div>
         </div>
@@ -90,20 +90,20 @@ const Index = () => {
         <div className="container mx-auto px-4">
           <div className="flex flex-col md:flex-row items-center justify-between">
             <div className="mb-6 md:mb-0 md:w-1/2">
-              <h2 className="text-3xl font-bold mb-4">Скидка 20% на первый заказ!</h2>
+              <h2 className="text-3xl font-bold mb-4">Знижка 20% на перше замовлення!</h2>
               <p className="mb-6 text-lg">
-                Зарегистрируйтесь на нашем сайте и получите скидку 20% на первый заказ. Акция действует до конца месяца!
+                Зареєструйтеся на нашому сайті та отримайте знижку 20% на перше замовлення. Акція діє до кінця місяця!
               </p>
               <Link to="/auth/register">
                 <Button className="bg-white text-primary hover:bg-gray-100" size="lg">
-                  Зарегистрироваться
+                  Зареєструватися
                 </Button>
               </Link>
             </div>
             <div className="md:w-1/2 flex justify-center md:justify-end">
               <img 
                 src="https://images.unsplash.com/photo-1565299585323-38d6b0865b47?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80" 
-                alt="Акция" 
+                alt="Акція" 
                 className="w-64 h-64 rounded-full object-cover border-4 border-secondary"
               />
             </div>

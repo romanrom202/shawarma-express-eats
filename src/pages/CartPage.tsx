@@ -20,8 +20,8 @@ const CartPage: React.FC = () => {
   const handleCheckout = () => {
     if (cartItems.length === 0) {
       toast({
-        title: "Ошибка",
-        description: "Корзина пуста. Добавьте товары для оформления заказа.",
+        title: "Помилка",
+        description: "Кошик порожній. Додайте товари для оформлення замовлення.",
         variant: "destructive",
       });
       return;
@@ -35,8 +35,8 @@ const CartPage: React.FC = () => {
     
     if (!deliveryAddress) {
       toast({
-        title: "Введите адрес",
-        description: "Пожалуйста, укажите адрес доставки",
+        title: "Введіть адресу",
+        description: "Будь ласка, вкажіть адресу доставки",
         variant: "destructive",
       });
       return;
@@ -45,8 +45,8 @@ const CartPage: React.FC = () => {
     // Here we would send the order to the backend
     // For now, just display success message
     toast({
-      title: "Заказ принят!",
-      description: "Ваш заказ успешно оформлен и передан в обработку.",
+      title: "Замовлення прийнято!",
+      description: "Ваше замовлення успішно оформлено та передано в обробку.",
       variant: "default",
     });
     
@@ -60,7 +60,7 @@ const CartPage: React.FC = () => {
   return (
     <MainLayout>
       <div className="container mx-auto px-4 py-8">
-        <h1 className="text-3xl font-bold mb-8">Корзина</h1>
+        <h1 className="text-3xl font-bold mb-8">Кошик</h1>
 
         {cartItems.length === 0 ? (
           <div className="text-center py-16 bg-white rounded-lg shadow-sm">
@@ -77,13 +77,13 @@ const CartPage: React.FC = () => {
                 d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"
               />
             </svg>
-            <h2 className="text-2xl font-medium mb-4">Ваша корзина пуста</h2>
+            <h2 className="text-2xl font-medium mb-4">Ваш кошик порожній</h2>
             <p className="text-text-light mb-8">
-              Похоже, вы ещё не добавили ни одного товара в корзину
+              Схоже, ви ще не додали жодного товару до кошика
             </p>
             <Link to="/menu">
               <Button className="bg-primary hover:bg-primary-dark">
-                Перейти в меню
+                Перейти до меню
               </Button>
             </Link>
           </div>
@@ -93,7 +93,7 @@ const CartPage: React.FC = () => {
             <div className="lg:w-2/3">
               <div className="bg-white rounded-lg shadow-sm overflow-hidden">
                 <div className="p-6">
-                  <h2 className="text-xl font-semibold mb-4">Товары в корзине</h2>
+                  <h2 className="text-xl font-semibold mb-4">Товари в кошику</h2>
 
                   <div className="divide-y divide-gray-200">
                     {cartItems.map((item) => (
@@ -107,7 +107,7 @@ const CartPage: React.FC = () => {
                         </div>
                         <div className="flex-grow sm:pl-6">
                           <h3 className="font-medium">{item.name}</h3>
-                          <p className="text-primary font-bold mt-1">{item.price} ₽</p>
+                          <p className="text-primary font-bold mt-1">{item.price} ₴</p>
                         </div>
                         <div className="flex items-center gap-2 mt-4 sm:mt-0">
                           <Button
@@ -137,7 +137,7 @@ const CartPage: React.FC = () => {
                           </Button>
                         </div>
                         <div className="font-bold ml-4 text-right w-20">
-                          {item.price * item.quantity} ₽
+                          {item.price * item.quantity} ₴
                         </div>
                       </div>
                     ))}
@@ -150,17 +150,17 @@ const CartPage: React.FC = () => {
             <div className="lg:w-1/3">
               <div className="bg-white rounded-lg shadow-sm p-6">
                 <h2 className="text-xl font-semibold mb-4">
-                  {isCheckingOut ? 'Оформление заказа' : 'Сумма заказа'}
+                  {isCheckingOut ? 'Оформлення замовлення' : 'Сума замовлення'}
                 </h2>
 
                 {isCheckingOut ? (
                   <form onSubmit={handlePlaceOrder}>
                     <div className="space-y-4">
                       <div>
-                        <label className="block text-sm font-medium mb-1">Адрес доставки</label>
+                        <label className="block text-sm font-medium mb-1">Адреса доставки</label>
                         <Input 
                           type="text" 
-                          placeholder="ул. Примерная, д. 123, кв. 45" 
+                          placeholder="вул. Хрещатик, буд. 1, кв. 1" 
                           value={deliveryAddress}
                           onChange={(e) => setDeliveryAddress(e.target.value)}
                           required
@@ -168,7 +168,7 @@ const CartPage: React.FC = () => {
                       </div>
 
                       <div>
-                        <label className="block text-sm font-medium mb-1">Способ оплаты</label>
+                        <label className="block text-sm font-medium mb-1">Спосіб оплати</label>
                         <div className="space-y-2">
                           <div className="flex items-center">
                             <input 
@@ -180,7 +180,7 @@ const CartPage: React.FC = () => {
                               onChange={() => setPaymentMethod('cash')} 
                               className="mr-2"
                             />
-                            <label htmlFor="cash">Наличными при получении</label>
+                            <label htmlFor="cash">Готівкою при отриманні</label>
                           </div>
                           <div className="flex items-center">
                             <input 
@@ -192,36 +192,36 @@ const CartPage: React.FC = () => {
                               onChange={() => setPaymentMethod('card')} 
                               className="mr-2"
                             />
-                            <label htmlFor="card">Картой онлайн</label>
+                            <label htmlFor="card">Карткою онлайн</label>
                           </div>
                         </div>
                       </div>
 
                       <div className="border-t border-gray-200 pt-4 mt-4">
                         <div className="flex justify-between mb-2">
-                          <span>Сумма заказа:</span>
-                          <span>{totalPrice} ₽</span>
+                          <span>Сума замовлення:</span>
+                          <span>{totalPrice} ₴</span>
                         </div>
                         <div className="flex justify-between mb-2">
-                          <span>Стоимость доставки:</span>
-                          <span>0 ₽</span>
+                          <span>Вартість доставки:</span>
+                          <span>0 ₴</span>
                         </div>
                         <div className="flex justify-between font-bold text-lg">
-                          <span>Итого:</span>
-                          <span>{totalPrice} ₽</span>
+                          <span>Разом:</span>
+                          <span>{totalPrice} ₴</span>
                         </div>
                       </div>
 
                       <div className="pt-4">
                         <Button className="w-full bg-primary hover:bg-primary-dark" type="submit">
-                          Оформить заказ
+                          Оформити замовлення
                         </Button>
                         <Button 
                           className="w-full mt-2" 
                           variant="outline"
                           onClick={() => setIsCheckingOut(false)}
                         >
-                          Вернуться в корзину
+                          Повернутися до кошика
                         </Button>
                       </div>
                     </div>
@@ -230,16 +230,16 @@ const CartPage: React.FC = () => {
                   <div>
                     <div className="border-t border-gray-200 pt-4 mb-4">
                       <div className="flex justify-between mb-2">
-                        <span>Сумма заказа:</span>
-                        <span>{totalPrice} ₽</span>
+                        <span>Сума замовлення:</span>
+                        <span>{totalPrice} ₴</span>
                       </div>
                       <div className="flex justify-between mb-2">
-                        <span>Стоимость доставки:</span>
-                        <span>0 ₽</span>
+                        <span>Вартість доставки:</span>
+                        <span>0 ₴</span>
                       </div>
                       <div className="flex justify-between font-bold text-lg">
-                        <span>Итого:</span>
-                        <span>{totalPrice} ₽</span>
+                        <span>Разом:</span>
+                        <span>{totalPrice} ₴</span>
                       </div>
                     </div>
 
@@ -247,11 +247,11 @@ const CartPage: React.FC = () => {
                       className="w-full bg-primary hover:bg-primary-dark" 
                       onClick={handleCheckout}
                     >
-                      Оформить заказ
+                      Оформити замовлення
                     </Button>
                     <div className="mt-4 text-center">
                       <Link to="/menu" className="text-primary hover:underline">
-                        Продолжить покупки
+                        Продовжити покупки
                       </Link>
                     </div>
                   </div>

@@ -27,7 +27,7 @@ const LoginForm: React.FC = () => {
       
       // Mock validation
       if (!email || !password) {
-        throw new Error('Пожалуйста, заполните все поля');
+        throw new Error('Будь ласка, заповніть усі поля');
       }
       
       // Mock successful login - would normally store JWT token
@@ -36,7 +36,7 @@ const LoginForm: React.FC = () => {
       // Redirect user (would use router in a real app)
       // navigate('/');
     } catch (err: any) {
-      setError(err.message || 'Произошла ошибка при входе');
+      setError(err.message || 'Виникла помилка при вході');
     } finally {
       setIsLoading(false);
     }
@@ -45,9 +45,9 @@ const LoginForm: React.FC = () => {
   return (
     <div className="w-full max-w-md p-8 space-y-8 bg-white rounded-lg shadow-lg">
       <div className="text-center">
-        <h1 className="text-2xl font-bold">Войти в аккаунт</h1>
+        <h1 className="text-2xl font-bold">Увійти в акаунт</h1>
         <p className="mt-2 text-sm text-gray-600">
-          Добро пожаловать в Shawarma Express
+          Ласкаво просимо до Шаурма ТиМаРо
         </p>
       </div>
 
@@ -77,7 +77,7 @@ const LoginForm: React.FC = () => {
               to="/auth/forgot-password" 
               className="text-sm text-primary hover:underline"
             >
-              Забыли пароль?
+              Забули пароль?
             </Link>
           </div>
           <Input 
@@ -97,7 +97,7 @@ const LoginForm: React.FC = () => {
             onCheckedChange={(checked) => setRememberMe(checked as boolean)}
           />
           <Label htmlFor="remember" className="text-sm font-normal cursor-pointer">
-            Запомнить меня
+            Запам'ятати мене
           </Label>
         </div>
 
@@ -106,15 +106,15 @@ const LoginForm: React.FC = () => {
           type="submit"
           disabled={isLoading}
         >
-          {isLoading ? 'Вход...' : 'Войти'}
+          {isLoading ? 'Вхід...' : 'Увійти'}
         </Button>
       </form>
 
       <div className="text-center pt-4">
         <p className="text-sm text-gray-600">
-          Нет аккаунта?{' '}
+          Немає акаунту?{' '}
           <Link to="/auth/register" className="text-primary font-medium hover:underline">
-            Зарегистрироваться
+            Зареєструватися
           </Link>
         </p>
       </div>

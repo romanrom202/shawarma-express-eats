@@ -17,37 +17,37 @@ const OrderSuccessPage: React.FC = () => {
             </svg>
           </div>
           
-          <h1 className="text-3xl md:text-4xl font-bold mb-4">Спасибо за заказ!</h1>
+          <h1 className="text-3xl md:text-4xl font-bold mb-4">Дякуємо за замовлення!</h1>
           
-          <p className="text-xl mb-3">Ваш заказ #{orderNumber} успешно оформлен</p>
+          <p className="text-xl mb-3">Ваше замовлення #{orderNumber} успішно оформлено</p>
           
           <p className="text-text-light mb-8">
-            Мы отправили подтверждение заказа на ваш email. 
-            Вы можете следить за статусом заказа в разделе "История заказов" в вашем личном кабинете.
+            Ми надіслали підтвердження замовлення на ваш email. 
+            Ви можете стежити за статусом замовлення в розділі "Історія замовлень" у вашому особистому кабінеті.
           </p>
           
           <div className="bg-white rounded-lg shadow-sm p-6 mb-8 text-left">
-            <h2 className="text-xl font-semibold mb-4">Информация о заказе:</h2>
+            <h2 className="text-xl font-semibold mb-4">Інформація про замовлення:</h2>
             
             <div className="space-y-3">
               <div className="flex justify-between">
-                <span className="text-text-light">Номер заказа:</span>
+                <span className="text-text-light">Номер замовлення:</span>
                 <span className="font-medium">#{orderNumber}</span>
               </div>
               
               <div className="flex justify-between">
                 <span className="text-text-light">Статус:</span>
-                <span className="font-medium text-green-600">Принят</span>
+                <span className="font-medium text-green-600">Прийнято</span>
               </div>
               
               <div className="flex justify-between">
-                <span className="text-text-light">Примерное время доставки:</span>
-                <span className="font-medium">30-45 минут</span>
+                <span className="text-text-light">Приблизний час доставки:</span>
+                <span className="font-medium">30-45 хвилин</span>
               </div>
               
               <div className="flex justify-between">
-                <span className="text-text-light">Способ оплаты:</span>
-                <span className="font-medium">При получении</span>
+                <span className="text-text-light">Спосіб оплати:</span>
+                <span className="font-medium">При отриманні</span>
               </div>
             </div>
           </div>
@@ -55,12 +55,12 @@ const OrderSuccessPage: React.FC = () => {
           <div className="flex flex-col sm:flex-row justify-center gap-4">
             <Link to="/menu">
               <Button variant="outline">
-                Вернуться в меню
+                Повернутися до меню
               </Button>
             </Link>
             <Link to="/order-history">
               <Button className="bg-primary hover:bg-primary-dark">
-                История заказов
+                Історія замовлень
               </Button>
             </Link>
           </div>

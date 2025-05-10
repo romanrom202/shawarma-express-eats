@@ -32,17 +32,17 @@ const RegisterForm: React.FC = () => {
     
     // Basic validation
     if (!formData.name || !formData.email || !formData.password) {
-      setError('Пожалуйста, заполните все поля');
+      setError('Будь ласка, заповніть усі поля');
       return;
     }
     
     if (formData.password !== formData.confirmPassword) {
-      setError('Пароли не совпадают');
+      setError('Паролі не співпадають');
       return;
     }
     
     if (!formData.agreeTerms) {
-      setError('Вы должны согласиться с условиями использования');
+      setError('Ви повинні погодитись з умовами використання');
       return;
     }
     
@@ -60,7 +60,7 @@ const RegisterForm: React.FC = () => {
       // Redirect user (would use router in a real app)
       // navigate('/auth/login');
     } catch (err: any) {
-      setError(err.message || 'Произошла ошибка при регистрации');
+      setError(err.message || 'Виникла помилка при реєстрації');
     } finally {
       setIsLoading(false);
     }
@@ -69,9 +69,9 @@ const RegisterForm: React.FC = () => {
   return (
     <div className="w-full max-w-md p-8 space-y-8 bg-white rounded-lg shadow-lg">
       <div className="text-center">
-        <h1 className="text-2xl font-bold">Регистрация</h1>
+        <h1 className="text-2xl font-bold">Реєстрація</h1>
         <p className="mt-2 text-sm text-gray-600">
-          Создайте аккаунт для заказа шаурмы
+          Створіть акаунт для замовлення шаурми
         </p>
       </div>
 
@@ -83,12 +83,12 @@ const RegisterForm: React.FC = () => {
 
       <form onSubmit={handleSubmit} className="space-y-6">
         <div className="space-y-2">
-          <Label htmlFor="name">Имя</Label>
+          <Label htmlFor="name">Ім'я</Label>
           <Input 
             id="name" 
             name="name"
             type="text" 
-            placeholder="Иван Иванов"
+            placeholder="Іван Іваненко"
             value={formData.name}
             onChange={handleChange}
             required
@@ -122,7 +122,7 @@ const RegisterForm: React.FC = () => {
         </div>
         
         <div className="space-y-2">
-          <Label htmlFor="confirmPassword">Подтвердите пароль</Label>
+          <Label htmlFor="confirmPassword">Підтвердіть пароль</Label>
           <Input 
             id="confirmPassword" 
             name="confirmPassword"
@@ -141,7 +141,7 @@ const RegisterForm: React.FC = () => {
             onCheckedChange={handleCheckboxChange}
           />
           <Label htmlFor="terms" className="text-sm font-normal cursor-pointer">
-            Я согласен с <Link to="/terms" className="text-primary hover:underline">условиями использования</Link> и <Link to="/privacy" className="text-primary hover:underline">политикой конфиденциальности</Link>
+            Я погоджуюсь з <Link to="/terms" className="text-primary hover:underline">умовами використання</Link> та <Link to="/privacy" className="text-primary hover:underline">політикою конфіденційності</Link>
           </Label>
         </div>
 
@@ -150,15 +150,15 @@ const RegisterForm: React.FC = () => {
           type="submit"
           disabled={isLoading}
         >
-          {isLoading ? 'Регистрация...' : 'Зарегистрироваться'}
+          {isLoading ? 'Реєстрація...' : 'Зареєструватися'}
         </Button>
       </form>
 
       <div className="text-center pt-4">
         <p className="text-sm text-gray-600">
-          Уже есть аккаунт?{' '}
+          Вже є акаунт?{' '}
           <Link to="/auth/login" className="text-primary font-medium hover:underline">
-            Войти
+            Увійти
           </Link>
         </p>
       </div>
