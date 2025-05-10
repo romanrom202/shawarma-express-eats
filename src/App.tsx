@@ -15,6 +15,8 @@ import LoginPage from "./pages/auth/LoginPage";
 import RegisterPage from "./pages/auth/RegisterPage";
 import AdminProductsPage from "./pages/admin/AdminProductsPage";
 import NotFound from "./pages/NotFound";
+import AboutPage from "./pages/AboutPage";
+import ContactsPage from "./pages/ContactsPage";
 
 const queryClient = new QueryClient();
 
@@ -31,6 +33,8 @@ const App = () => (
             <Route path="/menu" element={<MenuPage />} />
             <Route path="/cart" element={<CartPage />} />
             <Route path="/order-success" element={<OrderSuccessPage />} />
+            <Route path="/about" element={<AboutPage />} />
+            <Route path="/contacts" element={<ContactsPage />} />
             
             {/* Auth Routes */}
             <Route path="/auth/login" element={<LoginPage />} />
