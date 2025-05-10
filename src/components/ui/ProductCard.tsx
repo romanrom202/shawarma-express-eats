@@ -45,7 +45,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
         <h3 className="font-heading font-bold text-lg mb-2">{product.name}</h3>
         <p className="text-text-light text-sm mb-4 flex-grow">{product.description}</p>
         <div className="flex items-center justify-between">
-          <p className="text-primary font-bold text-lg">{product.price} ₽</p>
+          <p className="text-primary font-bold text-lg">{product.price} ₴</p>
           {quantity === 0 ? (
             <Button 
               className="bg-primary hover:bg-primary-light" 
@@ -53,7 +53,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
               onClick={handleAddToCart}
             >
               <ShoppingCart className="w-4 h-4 mr-1" />
-              В корзину
+              У кошик
             </Button>
           ) : (
             <div className="flex items-center space-x-2">
