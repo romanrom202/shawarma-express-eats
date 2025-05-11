@@ -34,7 +34,7 @@ const AdminPanelPage: React.FC = () => {
         <AdminLayout>
             <div className="space-y-6">
                 <div className="flex justify-between items-center">
-                    <h1 className="text-2xl font-bold">Панель управління</h1>
+                    <h1 className="text-2xl font-bold">Панель керування</h1>
                     <Link to="/admin/orders">
                         <Button className="bg-primary hover:bg-primary-dark">
                             Всі замовлення

@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import AdminLayout from '@/components/layouts/AdminLayout';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -19,8 +19,11 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { useToast } from '@/components/ui/use-toast';
 import { Product } from '@/components/ui/ProductCard';
 
+// Ключ для хранения товаров в localStorage
+const PRODUCTS_STORAGE_KEY = "shawarma_timaro_products";
+
 const AdminProductsPage: React.FC = () => {
-  const [products, setProducts] = useState(initialProducts);
+  const [products, setProducts] = useState<Product[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [newProduct, setNewProduct] = useState<Partial<Product>>({
@@ -34,6 +37,27 @@ const AdminProductsPage: React.FC = () => {
   
   const categories = ['Шаурма', 'Напої', 'Снеки', 'Десерти'];
 
+  // Загрузка товаров из localStorage при монтировании
+  useEffect(() => {
+    const savedProducts = localStorage.getItem(PRODUCTS_STORAGE_KEY);
+    if (savedProducts) {
+      try {
+        const parsedProducts = JSON.parse(savedProducts) as Product[];
+        setProducts(parsedProducts);
+      } catch (error) {
+        console.error('Помилка при завантаженні товарів:', error);
+        // Если ошибка загрузки из localStorage, используем начальные товары
+        setProducts(initialProducts);
+      }
+    } else {
+      // Если в localStorage нет товаров, используем начальные товары
+      setProducts(initialProducts);
+      // И сразу сохраняем их в localStorage
+      localStorage.setItem(PRODUCTS_STORAGE_KEY, JSON.stringify(initialProducts));
+    }
+  }, []);
+
+  // Фильтруем товары по поисковому запросу
   const filteredProducts = products.filter(product => 
     product.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
     product.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -41,7 +65,13 @@ const AdminProductsPage: React.FC = () => {
   );
 
   const handleDeleteProduct = (productId: number) => {
-    setProducts(products.filter(product => product.id !== productId));
+    // Удаляем товар из состояния
+    const updatedProducts = products.filter(product => product.id !== productId);
+    setProducts(updatedProducts);
+    
+    // Сохраняем обновленный список в localStorage
+    localStorage.setItem(PRODUCTS_STORAGE_KEY, JSON.stringify(updatedProducts));
+    
     toast({
       title: "Товар видалено",
       description: "Товар було успішно видалено з меню",
@@ -58,17 +88,23 @@ const AdminProductsPage: React.FC = () => {
       return;
     }
 
-    const newId = Math.max(...products.map(p => p.id)) + 1;
+    // Создаем новый ID (максимальный ID + 1)
+    const newId = Math.max(...products.map(p => p.id), 0) + 1;
     const productToAdd = {
       ...newProduct,
       id: newId,
       price: Number(newProduct.price)
     } as Product;
     
-    setProducts([...products, productToAdd]);
-    setIsAddDialogOpen(false);
+    // Добавляем товар в состояние
+    const updatedProducts = [...products, productToAdd];
+    setProducts(updatedProducts);
     
-    // Reset form
+    // Сохраняем обновленный список в localStorage
+    localStorage.setItem(PRODUCTS_STORAGE_KEY, JSON.stringify(updatedProducts));
+    
+    // Закрываем диалог и сбрасываем форму
+    setIsAddDialogOpen(false);
     setNewProduct({
       name: '',
       description: '',

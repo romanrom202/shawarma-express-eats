@@ -2,7 +2,7 @@
 import { Order, OrderStatus } from "@/models/Order";
 
 // This would be replaced with actual Firebase/API calls
-const STORAGE_KEY = "shawarma_express_orders";
+const STORAGE_KEY = "shawarma_timaro_orders";
 
 // Get all orders
 export const getAllOrders = async (): Promise<Order[]> => {
@@ -70,6 +70,17 @@ export const updateOrderStatus = async (orderId: string, status: OrderStatus): P
     return orders[orderIndex];
 };
 
+// Delete order by ID
+export const deleteOrder = async (orderId: string): Promise<void> => {
+    // Simulate API call
+    await new Promise(resolve => setTimeout(resolve, 500));
+
+    const orders = getOrdersFromStorage();
+    const updatedOrders = orders.filter(order => order.id !== orderId);
+    
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedOrders));
+};
+
 // Helper function to get orders from localStorage
 const getOrdersFromStorage = (): Order[] => {
     const storedOrders = localStorage.getItem(STORAGE_KEY);
@@ -81,7 +92,6 @@ const getOrdersFromStorage = (): Order[] => {
         }
     }
     
-    // Якщо немає замовлень у localStorage, повертаємо пустий масив
-    // замість генерації фейкових замовлень
+    // Повертаємо пустий масив, якщо немає збережених замовлень
     return [];
 };

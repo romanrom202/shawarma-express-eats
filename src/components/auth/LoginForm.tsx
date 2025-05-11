@@ -1,3 +1,4 @@
+
 // src/components/auth/LoginForm.tsx
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
@@ -55,7 +56,7 @@ const LoginForm: React.FC = () => {
         {/* Заголовок */}
         <div className="text-center">
           <h1 className="text-2xl font-bold">Увійти в акаунт</h1>
-          <p className="mt-2 text-sm text-gray-600">Ласкаво просимо до Шаурма ТиМаРо</p>
+          <p className="mt-2 text-sm text-gray-600">Ласкаво просимо до ШаурмаТиМаРо</p>
         </div>
 
         {/* Ошибка */}

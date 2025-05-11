@@ -9,16 +9,43 @@ import { User as UserIcon, Save } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/components/ui/use-toast';
 
+// Ключ для хранения данных профиля в localStorage
+const PROFILE_STORAGE_KEY = "shawarma_timaro_user_profile";
+
+// Интерфейс для данных профиля
+interface UserProfileData {
+    name: string;
+    email: string;
+    address: string;
+}
+
 const UserProfilePage: React.FC = () => {
     const { user } = useAuth();
     const { toast } = useToast();
     
     // Стан для форми профілю
-    const [formData, setFormData] = useState({
+    const [formData, setFormData] = useState<UserProfileData>({
         name: 'Іван Петренко',
         email: '',
         address: 'вул. Центральна, 123, м. Київ'
     });
+
+    // Загружаем сохраненные данные профиля из localStorage при монтировании
+    useEffect(() => {
+        const savedProfile = localStorage.getItem(PROFILE_STORAGE_KEY);
+        if (savedProfile) {
+            try {
+                const parsedProfile = JSON.parse(savedProfile) as UserProfileData;
+                setFormData(prevData => ({
+                    ...prevData,
+                    name: parsedProfile.name || prevData.name,
+                    address: parsedProfile.address || prevData.address,
+                }));
+            } catch (error) {
+                console.error('Помилка при завантаженні даних профілю:', error);
+            }
+        }
+    }, []);
 
     // Заповнюємо email з Firebase Auth
     useEffect(() => {
@@ -40,8 +67,11 @@ const UserProfilePage: React.FC = () => {
 
     const handleSave = (e: React.FormEvent) => {
         e.preventDefault();
-        // В реальному додатку тут був би запит до backend для збереження даних
-        // Зараз просто показуємо повідомлення про успіх
+
+        // Сохраняем данные в localStorage
+        localStorage.setItem(PROFILE_STORAGE_KEY, JSON.stringify(formData));
+        
+        // Показываем сообщение об успехе
         toast({
             title: "Зміни збережено",
             description: "Ваші особисті дані було успішно оновлено.",

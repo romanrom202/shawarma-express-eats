@@ -13,7 +13,7 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
   const location = useLocation();
   
   const navigation = [
-    { name: 'Панель управління', href: '/adminpanel', icon: Settings },
+    { name: 'Панель керування', href: '/adminpanel', icon: Settings },
     { name: 'Товари', href: '/admin/products', icon: Package },
     { name: 'Замовлення', href: '/admin/orders', icon: ShoppingBag },
   ];
@@ -41,7 +41,7 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
           <div className="h-16 flex items-center justify-between px-4 border-b border-gray-200">
             <Link to="/" className="flex items-center">
               <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center mr-2">
-                <span className="text-white font-bold text-sm">SE</span>
+                <span className="text-white font-bold text-sm">ШТ</span>
               </div>
               <span className="font-heading font-bold text-lg">Адмін Панель</span>
             </Link>

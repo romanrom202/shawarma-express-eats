@@ -12,15 +12,12 @@ import { useAuth } from '@/hooks/useAuth';
 
 const OrderHistoryPage: React.FC = () => {
     const { user } = useAuth();
-    const userId = user?.uid || "user123"; // В реальному додатку використовувався б uid користувача з Firebase
+    const userId = user?.uid || "guest"; // Используем guest для неавторизованных пользователей
 
     const { data: orders, isLoading, error } = useQuery({
         queryKey: ['orders', userId],
         queryFn: () => getUserOrders(userId),
     });
-
-    // Фільтруємо замовлення, щоб показувати лише ті, що належать поточному користувачу
-    const userOrders = orders?.filter(order => order.userId === userId) || [];
 
     return (
         <MainLayout>
@@ -54,9 +51,9 @@ const OrderHistoryPage: React.FC = () => {
                                 Спробувати знову
                             </Button>
                         </div>
-                    ) : userOrders.length > 0 ? (
+                    ) : orders && orders.length > 0 ? (
                         <div className="space-y-6">
-                            {userOrders.map(order => (
+                            {orders.map(order => (
                                 <div key={order.id} className="bg-white rounded-lg shadow-md overflow-hidden">
                                     <div className="p-6">
                                         <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-4">
@@ -98,7 +95,13 @@ const OrderHistoryPage: React.FC = () => {
                                     <div className="bg-gray-50 px-6 py-3 flex justify-between items-center">
                                         <div className="text-sm text-text-muted">
                                             Спосіб оплати: <span className="font-medium">
-                                            {order.paymentMethod === 'cash' ? 'Готівка' : order.paymentMethod === 'card' ? 'Картка' : 'Онлайн'}
+                                            {order.paymentMethod === 'cash' 
+                                              ? order.changeAmount 
+                                                ? `Готівкою кур'єру (потрібна решта з ${order.changeAmount} ₴)` 
+                                                : 'Готівкою кур\'єру'
+                                              : order.paymentMethod === 'card' 
+                                                ? 'Карткою кур\'єру' 
+                                                : 'Онлайн оплата'}
                                           </span>
                                         </div>
                                         <Button variant="outline" size="sm">

@@ -1,3 +1,4 @@
+
 // src/pages/OrderSuccessPage.tsx
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
@@ -13,13 +14,22 @@ const OrderSuccessPage: React.FC = () => {
   const orderNumber = order?.id ?? `ORD-${Math.floor(10000 + Math.random() * 90000)}`;
 
   // Выбор способа оплаты
-  const paymentLabel = order
-      ? order.paymentMethod === 'cash'
-          ? 'Готівка при отриманні'
-          : order.paymentMethod === 'card'
-              ? 'Картка при отриманні'
-              : 'Онлайн'
-      : 'При отриманні';
+  const getPaymentLabel = () => {
+    if (!order) return 'Готівкою кур\'єру';
+    
+    switch (order.paymentMethod) {
+      case 'cash':
+        return order.changeAmount 
+          ? `Готівкою кур'єру (потрібна решта з ${order.changeAmount} ₴)`
+          : 'Готівкою кур\'єру';
+      case 'card':
+        return 'Карткою кур\'єру';
+      case 'online':
+        return 'Онлайн оплата';
+      default:
+        return 'Готівкою кур\'єру';
+    }
+  };
 
   return (
       <MainLayout>
@@ -81,8 +91,15 @@ const OrderSuccessPage: React.FC = () => {
 
                 <div className="flex justify-between">
                   <span className="text-text-light">Спосіб оплати:</span>
-                  <span className="font-medium">{paymentLabel}</span>
+                  <span className="font-medium">{getPaymentLabel()}</span>
                 </div>
+                
+                {order?.address && (
+                  <div className="flex justify-between">
+                    <span className="text-text-light">Адреса доставки:</span>
+                    <span className="font-medium">{order.address}</span>
+                  </div>
+                )}
               </div>
             </div>
 

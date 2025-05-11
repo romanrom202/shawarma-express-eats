@@ -7,15 +7,21 @@ import { Input } from '@/components/ui/input';
 import { useCart } from '@/hooks/useCart';
 import { Plus, Minus, Trash2 } from 'lucide-react';
 import { useToast } from "@/components/ui/use-toast";
+import { createOrder } from '@/services/orderService';
+import { OrderStatus } from '@/models/Order';
+import { useAuth } from '@/hooks/useAuth';
 
 const CartPage: React.FC = () => {
   const { cartItems, updateQuantity, removeFromCart, totalPrice, clearCart } = useCart();
+  const { user } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
   
   const [isCheckingOut, setIsCheckingOut] = useState(false);
   const [deliveryAddress, setDeliveryAddress] = useState('');
   const [paymentMethod, setPaymentMethod] = useState('cash');
+  const [changeAmount, setChangeAmount] = useState('');
+  const [needChange, setNeedChange] = useState(false);
 
   const handleCheckout = () => {
     if (cartItems.length === 0) {
@@ -30,7 +36,7 @@ const CartPage: React.FC = () => {
     setIsCheckingOut(true);
   };
 
-  const handlePlaceOrder = (e: React.FormEvent) => {
+  const handlePlaceOrder = async (e: React.FormEvent) => {
     e.preventDefault();
     
     if (!deliveryAddress) {
@@ -41,20 +47,52 @@ const CartPage: React.FC = () => {
       });
       return;
     }
+
+    if (paymentMethod === 'cash' && needChange && !changeAmount) {
+      toast({
+        title: "Введіть суму",
+        description: "Будь ласка, вкажіть суму для решти",
+        variant: "destructive",
+      });
+      return;
+    }
     
-    // Here we would send the order to the backend
-    // For now, just display success message
-    toast({
-      title: "Замовлення прийнято!",
-      description: "Ваше замовлення успішно оформлено та передано в обробку.",
-      variant: "default",
-    });
-    
-    // Clear cart after successful order
-    clearCart();
-    
-    // Redirect to order confirmation page
-    navigate('/order-success');
+    try {
+      // Создаем объект заказа
+      const orderData = {
+        items: cartItems,
+        total: totalPrice,
+        status: OrderStatus.PENDING,
+        userId: user?.uid || null,
+        userEmail: user?.email || null,
+        userName: user?.displayName || null,
+        address: deliveryAddress,
+        paymentMethod: paymentMethod as "cash" | "card" | "online",
+        changeAmount: needChange ? changeAmount : undefined
+      };
+      
+      // Сохраняем заказ в localStorage
+      const newOrder = await createOrder(orderData);
+      
+      // Показываем сообщение об успехе
+      toast({
+        title: "Замовлення прийнято!",
+        description: "Ваше замовлення успішно оформлено та передано в обробку.",
+      });
+      
+      // Очищаем корзину
+      clearCart();
+      
+      // Переходим на страницу успешного заказа и передаем данные заказа
+      navigate('/order-success', { state: { order: newOrder } });
+    } catch (error) {
+      console.error('Помилка при створенні замовлення:', error);
+      toast({
+        title: "Помилка",
+        description: "Не вдалося створити замовлення. Спробуйте ще раз.",
+        variant: "destructive",
+      });
+    }
   };
 
   return (
@@ -180,7 +218,7 @@ const CartPage: React.FC = () => {
                               onChange={() => setPaymentMethod('cash')} 
                               className="mr-2"
                             />
-                            <label htmlFor="cash">Готівкою при отриманні</label>
+                            <label htmlFor="cash">Готівкою кур'єру</label>
                           </div>
                           <div className="flex items-center">
                             <input 
@@ -192,10 +230,37 @@ const CartPage: React.FC = () => {
                               onChange={() => setPaymentMethod('card')} 
                               className="mr-2"
                             />
-                            <label htmlFor="card">Карткою онлайн</label>
+                            <label htmlFor="card">Карткою кур'єру</label>
                           </div>
                         </div>
                       </div>
+
+                      {paymentMethod === 'cash' && (
+                        <div className="pl-5 mt-2">
+                          <div className="flex items-center mb-2">
+                            <input 
+                              type="checkbox" 
+                              id="needChange" 
+                              checked={needChange}
+                              onChange={() => setNeedChange(!needChange)}
+                              className="mr-2"
+                            />
+                            <label htmlFor="needChange" className="text-sm">Потрібна решта</label>
+                          </div>
+                          
+                          {needChange && (
+                            <div className="mt-2">
+                              <label className="block text-sm font-medium mb-1">З якої суми?</label>
+                              <Input 
+                                type="text" 
+                                placeholder="500" 
+                                value={changeAmount}
+                                onChange={(e) => setChangeAmount(e.target.value)}
+                              />
+                            </div>
+                          )}
+                        </div>
+                      )}
 
                       <div className="border-t border-gray-200 pt-4 mt-4">
                         <div className="flex justify-between mb-2">
