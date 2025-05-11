@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import AdminLayout from '@/components/layouts/AdminLayout';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
@@ -156,7 +157,6 @@ const AdminOrdersPage: React.FC = () => {
                                     <div className="space-y-1 text-sm">
                                         <p><span className="text-text-muted">Ім'я:</span> {selectedOrder.userName || 'Не вказано'}</p>
                                         <p><span className="text-text-muted">Email:</span> {selectedOrder.userEmail || 'Не вказано'}</p>
-                                        <p><span className="text-text-muted">Телефон:</span> {selectedOrder.phone || 'Не вказано'}</p>
                                         <p><span className="text-text-muted">Адреса:</span> {selectedOrder.address || 'Не вказано'}</p>
                                     </div>
                                 </div>
@@ -167,8 +167,8 @@ const AdminOrdersPage: React.FC = () => {
                                         <p>
                                             <span className="text-text-muted">Статус:</span>
                                             <span className={`inline-block px-2 py-1 ml-2 rounded-full text-xs font-medium ${getStatusColor(selectedOrder.status)}`}>
-                        {getStatusLabel(selectedOrder.status)}
-                      </span>
+                                                {getStatusLabel(selectedOrder.status)}
+                                            </span>
                                         </p>
                                         <p>
                                             <span className="text-text-muted">Спосіб оплати:</span>{' '}

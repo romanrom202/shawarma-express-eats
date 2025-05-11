@@ -1,18 +1,51 @@
-import React from 'react';
+
+import React, { useState, useEffect } from 'react';
 import MainLayout from '@/components/layouts/MainLayout';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Link } from 'react-router-dom';
-import { User } from 'lucide-react';
+import { User as UserIcon, Save } from 'lucide-react';
+import { useAuth } from '@/hooks/useAuth';
+import { useToast } from '@/components/ui/use-toast';
 
 const UserProfilePage: React.FC = () => {
-    // This would be connected to Firebase Auth in a real app
-    const user = {
+    const { user } = useAuth();
+    const { toast } = useToast();
+    
+    // Стан для форми профілю
+    const [formData, setFormData] = useState({
         name: 'Іван Петренко',
-        email: 'ivan@example.com',
-        phone: '+380991234567',
+        email: '',
         address: 'вул. Центральна, 123, м. Київ'
+    });
+
+    // Заповнюємо email з Firebase Auth
+    useEffect(() => {
+        if (user) {
+            setFormData(prev => ({
+                ...prev,
+                email: user.email || ''
+            }));
+        }
+    }, [user]);
+
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const { id, value } = e.target;
+        setFormData(prev => ({
+            ...prev,
+            [id]: value
+        }));
+    };
+
+    const handleSave = (e: React.FormEvent) => {
+        e.preventDefault();
+        // В реальному додатку тут був би запит до backend для збереження даних
+        // Зараз просто показуємо повідомлення про успіх
+        toast({
+            title: "Зміни збережено",
+            description: "Ваші особисті дані було успішно оновлено.",
+        });
     };
 
     return (
@@ -23,7 +56,7 @@ const UserProfilePage: React.FC = () => {
                         <h1 className="text-3xl font-bold">Особистий кабінет</h1>
                         <Link to="/order-history">
                             <Button variant="outline" className="flex items-center gap-2">
-                                <User className="h-4 w-4" />
+                                <UserIcon className="h-4 w-4" />
                                 <span>Історія замовлень</span>
                             </Button>
                         </Link>
@@ -32,37 +65,43 @@ const UserProfilePage: React.FC = () => {
                     <div className="bg-white rounded-lg shadow-md p-6 mb-8">
                         <h2 className="text-xl font-semibold mb-6">Особисті дані</h2>
 
-                        <form className="space-y-6">
+                        <form className="space-y-6" onSubmit={handleSave}>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div className="space-y-2">
                                     <Label htmlFor="name">Ім'я</Label>
-                                    <Input id="name" defaultValue={user.name} />
+                                    <Input 
+                                        id="name" 
+                                        value={formData.name} 
+                                        onChange={handleChange}
+                                    />
                                 </div>
 
                                 <div className="space-y-2">
                                     <Label htmlFor="email">Email</Label>
-                                    <Input id="email" type="email" defaultValue={user.email} disabled />
-                                </div>
-
-                                <div className="space-y-2">
-                                    <Label htmlFor="phone">Телефон</Label>
-                                    <Input id="phone" defaultValue={user.phone} />
-                                </div>
-
-                                <div className="space-y-2">
-                                    <Label htmlFor="password">Пароль</Label>
-                                    <Input id="password" type="password" value="••••••••" disabled />
+                                    <Input 
+                                        id="email" 
+                                        type="email" 
+                                        value={formData.email}
+                                        disabled
+                                    />
                                 </div>
                             </div>
 
                             <div className="space-y-2">
                                 <Label htmlFor="address">Адреса доставки</Label>
-                                <Input id="address" defaultValue={user.address} />
+                                <Input 
+                                    id="address" 
+                                    value={formData.address}
+                                    onChange={handleChange}
+                                />
                             </div>
 
                             <div className="flex justify-end space-x-4">
-                                <Button variant="outline">Скасувати</Button>
-                                <Button className="bg-primary hover:bg-primary-dark">Зберегти зміни</Button>
+                                <Button variant="outline" type="reset">Скасувати</Button>
+                                <Button className="bg-primary hover:bg-primary-dark" type="submit">
+                                    <Save className="h-4 w-4 mr-2" />
+                                    Зберегти зміни
+                                </Button>
                             </div>
                         </form>
                     </div>

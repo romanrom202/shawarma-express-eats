@@ -1,3 +1,4 @@
+
 import React from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -29,7 +30,7 @@ const App: React.FC = () => (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
         <CartProvider>
-          {/* уведомления */}
+          {/* повідомлення */}
           <Toaster />
           <Sonner />
 
@@ -48,11 +49,11 @@ const App: React.FC = () => (
               <Route path="/auth/register" element={<RegisterPage />} />
               <Route path="/auth/forgot-password" element={<ForgotPasswordPage />} />
 
-              {/* User Routes (защита — позже) */}
+              {/* User Routes (захист — пізніше) */}
               <Route path="/profile" element={<UserProfilePage />} />
               <Route path="/order-history" element={<OrderHistoryPage />} />
 
-              {/* Admin Routes (защита — позже) */}
+              {/* Admin Routes (захист — пізніше) */}
               <Route path="/admin/products" element={<AdminProductsPage />} />
               <Route path="/adminpanel" element={<AdminPanelPage />} />
               <Route path="/admin/orders" element={<AdminOrdersPage />} />

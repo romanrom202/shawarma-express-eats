@@ -1,3 +1,4 @@
+
 import React from 'react';
 import AdminLayout from '@/components/layouts/AdminLayout';
 import { useQuery } from '@tanstack/react-query';
@@ -173,12 +174,12 @@ const AdminPanelPage: React.FC = () => {
                                                     <div className={`flex items-center ${statusColor}`}>
                                                         {statusIcon}
                                                         <span className="ml-1">
-                                {order.status === OrderStatus.PENDING ? 'Очікує' :
-                                    order.status === OrderStatus.ACCEPTED ? 'Прийнято' :
-                                        order.status === OrderStatus.PREPARING ? 'Готується' :
-                                            order.status === OrderStatus.DELIVERING ? 'Доставка' :
-                                                order.status === OrderStatus.DELIVERED ? 'Доставлено' : 'Скасовано'}
-                              </span>
+                                                            {order.status === OrderStatus.PENDING ? 'Очікує' :
+                                                                order.status === OrderStatus.ACCEPTED ? 'Прийнято' :
+                                                                    order.status === OrderStatus.PREPARING ? 'Готується' :
+                                                                        order.status === OrderStatus.DELIVERING ? 'Доставка' :
+                                                                            order.status === OrderStatus.DELIVERED ? 'Доставлено' : 'Скасовано'}
+                                                          </span>
                                                     </div>
                                                 </td>
                                                 <td className="py-3 px-4 text-right">

@@ -3,13 +3,37 @@ import React, { useState } from 'react';
 import AdminLayout from '@/components/layouts/AdminLayout';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Edit, Trash2, Plus, Search } from 'lucide-react';
+import { Edit, Trash2, Plus, Search, Save, X } from 'lucide-react';
 import { products as initialProducts } from '@/data/products';
+import { 
+  Dialog, 
+  DialogContent, 
+  DialogHeader, 
+  DialogTitle,
+  DialogFooter,
+  DialogClose
+} from '@/components/ui/dialog';
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { useToast } from '@/components/ui/use-toast';
+import { Product } from '@/components/ui/ProductCard';
 
 const AdminProductsPage: React.FC = () => {
   const [products, setProducts] = useState(initialProducts);
   const [searchTerm, setSearchTerm] = useState('');
+  const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
+  const [newProduct, setNewProduct] = useState<Partial<Product>>({
+    name: '',
+    description: '',
+    price: 0,
+    imageUrl: '',
+    category: 'Шаурма',
+  });
+  const { toast } = useToast();
   
+  const categories = ['Шаурма', 'Напої', 'Снеки', 'Десерти'];
+
   const filteredProducts = products.filter(product => 
     product.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
     product.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -18,18 +42,72 @@ const AdminProductsPage: React.FC = () => {
 
   const handleDeleteProduct = (productId: number) => {
     setProducts(products.filter(product => product.id !== productId));
+    toast({
+      title: "Товар видалено",
+      description: "Товар було успішно видалено з меню",
+    });
+  };
+
+  const handleAddProduct = () => {
+    if (!newProduct.name || !newProduct.description || !newProduct.price || !newProduct.imageUrl) {
+      toast({
+        title: "Помилка",
+        description: "Будь ласка, заповніть всі поля",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    const newId = Math.max(...products.map(p => p.id)) + 1;
+    const productToAdd = {
+      ...newProduct,
+      id: newId,
+      price: Number(newProduct.price)
+    } as Product;
+    
+    setProducts([...products, productToAdd]);
+    setIsAddDialogOpen(false);
+    
+    // Reset form
+    setNewProduct({
+      name: '',
+      description: '',
+      price: 0,
+      imageUrl: '',
+      category: 'Шаурма',
+    });
+    
+    toast({
+      title: "Товар додано",
+      description: "Новий товар було успішно додано до меню",
+    });
+  };
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
+    setNewProduct(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+
+  const handleCategoryChange = (value: string) => {
+    setNewProduct(prev => ({
+      ...prev,
+      category: value
+    }));
   };
 
   return (
     <AdminLayout>
       <div className="mb-6 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold">Управление товарами</h1>
-          <p className="text-text-light">Добавляйте, редактируйте и удаляйте товары из меню</p>
+          <h1 className="text-2xl font-bold">Управління товарами</h1>
+          <p className="text-text-light">Додавайте, редагуйте та видаляйте товари з меню</p>
         </div>
-        <Button className="bg-primary hover:bg-primary-dark">
+        <Button className="bg-primary hover:bg-primary-dark" onClick={() => setIsAddDialogOpen(true)}>
           <Plus className="h-4 w-4 mr-2" />
-          Добавить товар
+          Додати товар
         </Button>
       </div>
 
@@ -39,7 +117,7 @@ const AdminProductsPage: React.FC = () => {
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} />
             <Input
               className="pl-10"
-              placeholder="Поиск товаров..."
+              placeholder="Пошук товарів..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />
@@ -54,13 +132,13 @@ const AdminProductsPage: React.FC = () => {
                   Товар
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-text-light uppercase tracking-wider">
-                  Категория
+                  Категорія
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-text-light uppercase tracking-wider">
-                  Цена
+                  Ціна
                 </th>
                 <th className="px-6 py-3 text-right text-xs font-medium text-text-light uppercase tracking-wider">
-                  Действия
+                  Дії
                 </th>
               </tr>
             </thead>
@@ -84,7 +162,7 @@ const AdminProductsPage: React.FC = () => {
                     </span>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    {product.price} ₽
+                    {product.price} ₴
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                     <div className="flex justify-end space-x-2">
@@ -106,7 +184,7 @@ const AdminProductsPage: React.FC = () => {
               {filteredProducts.length === 0 && (
                 <tr>
                   <td colSpan={4} className="px-6 py-4 text-center text-text-light">
-                    Товары не найдены
+                    Товари не знайдені
                   </td>
                 </tr>
               )}
@@ -116,10 +194,108 @@ const AdminProductsPage: React.FC = () => {
 
         <div className="bg-gray-50 px-6 py-4 border-t border-gray-200">
           <p className="text-sm text-text-light">
-            Всего товаров: {filteredProducts.length}
+            Всього товарів: {filteredProducts.length}
           </p>
         </div>
       </div>
+
+      {/* Dialog for adding new product */}
+      <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
+        <DialogContent className="sm:max-w-lg">
+          <DialogHeader>
+            <DialogTitle>Додати новий товар</DialogTitle>
+          </DialogHeader>
+          
+          <div className="grid gap-4 py-4">
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="name" className="text-right">
+                Назва
+              </Label>
+              <Input
+                id="name"
+                name="name"
+                value={newProduct.name}
+                onChange={handleInputChange}
+                className="col-span-3"
+              />
+            </div>
+            
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="price" className="text-right">
+                Ціна
+              </Label>
+              <Input
+                id="price"
+                name="price"
+                type="number"
+                value={newProduct.price}
+                onChange={handleInputChange}
+                className="col-span-3"
+              />
+            </div>
+
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="category" className="text-right">
+                Категорія
+              </Label>
+              <Select 
+                value={newProduct.category} 
+                onValueChange={handleCategoryChange}
+              >
+                <SelectTrigger className="col-span-3">
+                  <SelectValue placeholder="Виберіть категорію" />
+                </SelectTrigger>
+                <SelectContent>
+                  {categories.map(category => (
+                    <SelectItem key={category} value={category}>
+                      {category}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="imageUrl" className="text-right">
+                URL зображення
+              </Label>
+              <Input
+                id="imageUrl"
+                name="imageUrl"
+                value={newProduct.imageUrl}
+                onChange={handleInputChange}
+                className="col-span-3"
+              />
+            </div>
+            
+            <div className="grid grid-cols-4 items-start gap-4">
+              <Label htmlFor="description" className="text-right">
+                Опис
+              </Label>
+              <Textarea
+                id="description"
+                name="description"
+                value={newProduct.description}
+                onChange={handleInputChange}
+                className="col-span-3"
+                rows={3}
+              />
+            </div>
+          </div>
+          
+          <DialogFooter>
+            <DialogClose asChild>
+              <Button type="button" variant="outline">
+                Скасувати
+              </Button>
+            </DialogClose>
+            <Button type="button" onClick={handleAddProduct}>
+              <Save className="h-4 w-4 mr-2" />
+              Зберегти товар
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </AdminLayout>
   );
 };

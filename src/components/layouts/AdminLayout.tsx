@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { Menu, X, Package, ShoppingBag, LogOut, User, Settings } from 'lucide-react';
+import { Menu, X, Package, ShoppingBag, LogOut, Settings } from 'lucide-react';
 
 interface AdminLayoutProps {
   children: React.ReactNode;
@@ -13,10 +13,9 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
   const location = useLocation();
   
   const navigation = [
-    { name: 'Панель управления', href: '/admin', icon: Settings },
-    { name: 'Товары', href: '/admin/products', icon: Package },
-    { name: 'Заказы', href: '/admin/orders', icon: ShoppingBag },
-    { name: 'Пользователи', href: '/admin/users', icon: User },
+    { name: 'Панель управління', href: '/adminpanel', icon: Settings },
+    { name: 'Товари', href: '/admin/products', icon: Package },
+    { name: 'Замовлення', href: '/admin/orders', icon: ShoppingBag },
   ];
   
   const toggleSidebar = () => setSidebarOpen(!sidebarOpen);
@@ -44,7 +43,7 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
               <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center mr-2">
                 <span className="text-white font-bold text-sm">SE</span>
               </div>
-              <span className="font-heading font-bold text-lg">Admin Panel</span>
+              <span className="font-heading font-bold text-lg">Адмін Панель</span>
             </Link>
             <Button 
               variant="ghost" 
@@ -102,7 +101,7 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
             <Menu className="h-6 w-6" />
           </Button>
           <div className="flex items-center">
-            <span className="text-sm text-text-muted mr-2">Администратор</span>
+            <span className="text-sm text-text-muted mr-2">Адміністратор</span>
             <div className="h-8 w-8 rounded-full bg-primary text-white flex items-center justify-center">
               <span className="text-xs font-medium">A</span>
             </div>
