@@ -38,7 +38,7 @@ const Hero: React.FC = () => {
               />
               <div className="absolute -bottom-6 -right-6 bg-secondary text-secondary-foreground rounded-full p-6 shadow-xl">
                 <div className="text-center">
-                  <p className="font-bold text-2xl">від 99₴</p>
+                  <p className="font-bold text-2xl">від 160₴</p>
                   <p className="text-sm">Доставка<br />від 30 хв</p>
                 </div>
               </div>
