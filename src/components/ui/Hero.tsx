@@ -16,15 +16,10 @@ const Hero: React.FC = () => {
               Свіжі інгредієнти, чудовий смак та швидка доставка. 
               Шаурма ТиМаРо — ваш ідеальний вибір для швидкого та смачного перекусу!
             </p>
-            <div className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
+            <div className="flex flex-col sm:flex-row space-y-4 sm:space-y-0">
               <Link to="/menu">
                 <Button className="bg-white text-primary hover:bg-gray-100 font-medium px-6 py-3 rounded-lg w-full sm:w-auto">
                   Замовити зараз
-                </Button>
-              </Link>
-              <Link to="/menu">
-                <Button variant="outline" className="border-white text-primary hover:bg-white/10 font-medium px-6 py-3 rounded-lg w-full sm:w-auto">
-                  Меню
                 </Button>
               </Link>
             </div>

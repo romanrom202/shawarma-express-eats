@@ -6,6 +6,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { CartProvider } from "@/hooks/useCart";
+import AdminAuthGuard from "@/components/auth/AdminAuthGuard";
 
 // Pages
 import Index from "./pages/Index";
@@ -22,7 +23,11 @@ import OrderHistoryPage from "./pages/user/OrderHistoryPage";
 import AdminProductsPage from "./pages/admin/AdminProductsPage";
 import AdminPanelPage from "./pages/admin/AdminPanelPage";
 import AdminOrdersPage from "./pages/admin/AdminOrdersPage";
+import AdminLoginPage from "./pages/admin/AdminLoginPage";
 import NotFound from "./pages/NotFound";
+import TermsPage from "./pages/TermsPage";
+import PrivacyPage from "./pages/PrivacyPage";
+import DeliveryPage from "./pages/DeliveryPage";
 
 const queryClient = new QueryClient();
 
@@ -43,6 +48,9 @@ const App: React.FC = () => (
               <Route path="/order-success" element={<OrderSuccessPage />} />
               <Route path="/about" element={<AboutPage />} />
               <Route path="/contacts" element={<ContactsPage />} />
+              <Route path="/terms" element={<TermsPage />} />
+              <Route path="/privacy" element={<PrivacyPage />} />
+              <Route path="/delivery" element={<DeliveryPage />} />
 
               {/* Auth Routes */}
               <Route path="/auth/login" element={<LoginPage />} />
@@ -53,10 +61,32 @@ const App: React.FC = () => (
               <Route path="/profile" element={<UserProfilePage />} />
               <Route path="/order-history" element={<OrderHistoryPage />} />
 
-              {/* Admin Routes (захист — пізніше) */}
-              <Route path="/admin/products" element={<AdminProductsPage />} />
-              <Route path="/adminpanel" element={<AdminPanelPage />} />
-              <Route path="/admin/orders" element={<AdminOrdersPage />} />
+              {/* Admin Routes with Authentication */}
+              <Route path="/admin/login" element={<AdminLoginPage />} />
+              <Route 
+                path="/adminpanel" 
+                element={
+                  <AdminAuthGuard>
+                    <AdminPanelPage />
+                  </AdminAuthGuard>
+                } 
+              />
+              <Route 
+                path="/admin/products" 
+                element={
+                  <AdminAuthGuard>
+                    <AdminProductsPage />
+                  </AdminAuthGuard>
+                } 
+              />
+              <Route 
+                path="/admin/orders" 
+                element={
+                  <AdminAuthGuard>
+                    <AdminOrdersPage />
+                  </AdminAuthGuard>
+                } 
+              />
 
               {/* 404 */}
               <Route path="*" element={<NotFound />} />

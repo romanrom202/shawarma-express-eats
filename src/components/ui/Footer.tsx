@@ -31,7 +31,7 @@ const Footer: React.FC = () => {
                 <Link to="/privacy" className="hover:text-secondary transition-colors">Політика конфіденційності</Link>
               </li>
               <li>
-                <Link to="/faq" className="hover:text-secondary transition-colors">Часті питання</Link>
+                <Link to="/terms" className="hover:text-secondary transition-colors">Умови використання</Link>
               </li>
             </ul>
           </div>
