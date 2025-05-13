@@ -84,32 +84,6 @@ const Index = () => {
           </div>
         </div>
       </section>
-
-      {/* CTA Section */}
-      <section className="py-16 bg-primary text-white">
-        <div className="container mx-auto px-4">
-          <div className="flex flex-col md:flex-row items-center justify-between">
-            <div className="mb-6 md:mb-0 md:w-1/2">
-              <h2 className="text-3xl font-bold mb-4">Знижка 20% на перше замовлення!</h2>
-              <p className="mb-6 text-lg">
-                Зареєструйтеся на нашому сайті та отримайте знижку 20% на перше замовлення. Акція діє до кінця місяця!
-              </p>
-              <Link to="/auth/register">
-                <Button className="bg-white text-primary hover:bg-gray-100" size="lg">
-                  Зареєструватися
-                </Button>
-              </Link>
-            </div>
-            <div className="md:w-1/2 flex justify-center md:justify-end">
-              <img 
-                src="https://images.unsplash.com/photo-1565299585323-38d6b0865b47?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80" 
-                alt="Акція" 
-                className="w-64 h-64 rounded-full object-cover border-4 border-secondary"
-              />
-            </div>
-          </div>
-        </div>
-      </section>
     </MainLayout>
   );
 };

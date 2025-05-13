@@ -1,13 +1,40 @@
-import React, { useState, useMemo } from 'react';
+
+import React, { useState, useMemo, useEffect } from 'react';
 import MainLayout from '@/components/layouts/MainLayout';
 import ProductCard, { Product } from '@/components/ui/ProductCard';
 import CategoryFilter from '@/components/ui/CategoryFilter';
 import ProductSearch from '@/components/ui/ProductSearch';
-import { products, categories } from '@/data/products';
+import { products as initialProducts, categories as initialCategories } from '@/data/products';
+
+// Key for storing products in localStorage (same as in AdminProductsPage)
+const PRODUCTS_STORAGE_KEY = "shawarma_timaro_products";
 
 const MenuPage: React.FC = () => {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
+  const [products, setProducts] = useState<Product[]>([]);
+  const [categories, setCategories] = useState<string[]>([]);
+
+  // Load products from localStorage or use initial ones
+  useEffect(() => {
+    const savedProducts = localStorage.getItem(PRODUCTS_STORAGE_KEY);
+    if (savedProducts) {
+      try {
+        const parsedProducts = JSON.parse(savedProducts) as Product[];
+        setProducts(parsedProducts);
+        // Extract unique categories from products
+        const uniqueCategories = [...new Set(parsedProducts.map(product => product.category))];
+        setCategories(uniqueCategories);
+      } catch (error) {
+        console.error('Помилка при завантаженні товарів:', error);
+        setProducts(initialProducts);
+        setCategories(initialCategories);
+      }
+    } else {
+      setProducts(initialProducts);
+      setCategories(initialCategories);
+    }
+  }, []);
 
   const filteredProducts = useMemo(() => {
     return products.filter((product) => {
@@ -21,7 +48,7 @@ const MenuPage: React.FC = () => {
               .includes(searchTerm.toLowerCase());
       return categoryMatch && searchMatch;
     });
-  }, [selectedCategory, searchTerm]);
+  }, [selectedCategory, searchTerm, products]);
 
   return (
       <MainLayout>
