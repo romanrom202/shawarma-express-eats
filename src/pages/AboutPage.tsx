@@ -14,7 +14,7 @@ const AboutPage: React.FC = () => {
           <div className="flex flex-col md:flex-row gap-10 mb-12">
             <div className="md:w-1/2">
               <img 
-                src="https://images.unsplash.com/photo-1561651823-34feb02250e4?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80" 
+                src="/founders/team.jpg"
                 alt="Наша команда" 
                 className="rounded-lg shadow-md w-full h-auto"
               />
@@ -73,7 +73,7 @@ const AboutPage: React.FC = () => {
             </div>
             <div className="md:w-1/2">
               <img 
-                src="https://images.unsplash.com/photo-1630409346824-4f0e7b080087?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80" 
+                src="https://images.unsplash.com/photo-1561651823-34feb02250e4?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80"
                 alt="Наша кухня" 
                 className="rounded-lg shadow-md w-full h-auto"
               />
@@ -86,9 +86,9 @@ const AboutPage: React.FC = () => {
           </p>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-8">
             {[
-              {name: "Роман Горбачов", role: "Засновник і технічний директор", image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=256&q=80"},
-              {name: "Тимофій Білецький", role: "Засновник і директор з розвитку та маркетингу", image: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=256&q=80"},
-              {name: "Максим Гладкоскок", role: "Засновник і операційний директор", image: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=256&q=80"}
+              {name: "Роман Горбачов", role: "Засновник і технічний директор", image: "/founders/roman.jpg"},
+              {name: "Тимофій Білецький", role: "Засновник і директор з розвитку та маркетингу", image: "/founders/timofii.jpg"},
+              {name: "Максим Гладкоскок", role: "Засновник і операційний директор", image: "/founders/maksim.jpg"}
             ].map((member, index) => (
               <div key={index} className="text-center">
                 <div className="w-32 h-32 mx-auto rounded-full overflow-hidden mb-4">
