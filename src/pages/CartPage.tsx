@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import MainLayout from '@/components/layouts/MainLayout';
@@ -22,6 +21,7 @@ const CartPage: React.FC = () => {
   const [paymentMethod, setPaymentMethod] = useState('cash');
   const [changeAmount, setChangeAmount] = useState('');
   const [needChange, setNeedChange] = useState(false);
+  const [changeAmountError, setChangeAmountError] = useState('');
 
   const handleCheckout = () => {
     if (cartItems.length === 0) {
@@ -36,6 +36,19 @@ const CartPage: React.FC = () => {
     setIsCheckingOut(true);
   };
 
+  const handleChangeAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setChangeAmount(value);
+    
+    // Validate that change amount is not less than order total
+    const numValue = parseFloat(value);
+    if (isNaN(numValue) || numValue < totalPrice) {
+      setChangeAmountError(`Сума має бути не менше суми замовлення (${totalPrice} ₴)`);
+    } else {
+      setChangeAmountError('');
+    }
+  };
+
   const handlePlaceOrder = async (e: React.FormEvent) => {
     e.preventDefault();
     
@@ -48,13 +61,25 @@ const CartPage: React.FC = () => {
       return;
     }
 
-    if (paymentMethod === 'cash' && needChange && !changeAmount) {
-      toast({
-        title: "Введіть суму",
-        description: "Будь ласка, вкажіть суму для решти",
-        variant: "destructive",
-      });
-      return;
+    if (paymentMethod === 'cash' && needChange) {
+      if (!changeAmount) {
+        toast({
+          title: "Введіть суму",
+          description: "Будь ласка, вкажіть суму для решти",
+          variant: "destructive",
+        });
+        return;
+      }
+      
+      const numChangeAmount = parseFloat(changeAmount);
+      if (isNaN(numChangeAmount) || numChangeAmount < totalPrice) {
+        toast({
+          title: "Некоректна сума",
+          description: `Сума для решти має бути не менше суми замовлення (${totalPrice} ₴)`,
+          variant: "destructive",
+        });
+        return;
+      }
     }
     
     try {
@@ -253,10 +278,14 @@ const CartPage: React.FC = () => {
                               <label className="block text-sm font-medium mb-1">З якої суми?</label>
                               <Input 
                                 type="text" 
-                                placeholder="500" 
+                                placeholder={`Мінімум ${totalPrice} ₴`}
                                 value={changeAmount}
-                                onChange={(e) => setChangeAmount(e.target.value)}
+                                onChange={handleChangeAmountChange}
+                                className={changeAmountError ? "border-red-500" : ""}
                               />
+                              {changeAmountError && (
+                                <p className="text-red-500 text-sm mt-1">{changeAmountError}</p>
+                              )}
                             </div>
                           )}
                         </div>

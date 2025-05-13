@@ -8,7 +8,7 @@ const Footer: React.FC = () => {
   return (
     <footer className="bg-text py-8 text-white">
       <div className="container mx-auto px-4">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           {/* Contact Info */}
           <div>
             <h3 className="font-heading text-xl font-bold mb-4 text-secondary">Контакти</h3>
@@ -34,25 +34,6 @@ const Footer: React.FC = () => {
                 <Link to="/terms" className="hover:text-secondary transition-colors">Умови використання</Link>
               </li>
             </ul>
-          </div>
-
-          {/* Newsletter */}
-          <div>
-            <h3 className="font-heading text-xl font-bold mb-4 text-secondary">Слідкуйте за новинами</h3>
-            <p className="mb-4">Підпишіться на нашу розсилку, щоб отримувати новини та спеціальні пропозиції</p>
-            <form className="flex">
-              <input 
-                type="email" 
-                placeholder="Ваш email" 
-                className="px-4 py-2 rounded-l-md flex-1 text-text focus:outline-none" 
-              />
-              <button 
-                type="submit" 
-                className="bg-primary hover:bg-primary-dark transition-colors px-4 py-2 rounded-r-md"
-              >
-                Підписатися
-              </button>
-            </form>
           </div>
         </div>
 

@@ -22,10 +22,10 @@ const AboutPage: React.FC = () => {
             <div className="md:w-1/2">
               <h2 className="text-2xl font-bold mb-4 text-text">Наша історія</h2>
               <p className="text-text-light mb-4">
-                Шаурма ТиМаРо була заснована у 2015 році трьома друзями, які мали спільну мрію — принести автентичний смак східної кухні до України. Початок був скромним — невеликий кіоск у центрі Києва, але наша відданість якості та смаку швидко принесла нам популярність.
+                Шаурма ТиМаРо заснована у 2025 році трьома друзями, які мали спільну мрію — принести автентичний смак східної кухні до України.
               </p>
               <p className="text-text-light mb-4">
-                Сьогодні мережа ТиМаРо налічує 12 закладів по всій Україні, і ми продовжуємо розширюватися. Наша місія залишається незмінною — готувати найсмачнішу шаурму з найсвіжіших інгредієнтів.
+                Сьогодні мережа ТиМаРо налічує 1 заклад у Києві, і ми продовжуємо розширюватися. Наша місія залишається незмінною — готувати найсмачнішу шаурму з найсвіжіших інгредієнтів.
               </p>
             </div>
           </div>
@@ -84,12 +84,11 @@ const AboutPage: React.FC = () => {
           <p className="text-text-light mb-8 text-center max-w-2xl mx-auto">
             Команда ТиМаРо — це дружня родина професіоналів своєї справи, які щодня працюють, щоб дарувати вам найкращі враження від східної кухні.
           </p>
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 mb-8">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-8">
             {[
-              {name: "Олександр Тимченко", role: "Засновник і генеральний директор", image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=256&q=80"},
-              {name: "Марія Романенко", role: "Шеф-кухар", image: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=256&q=80"},
-              {name: "Роман Петренко", role: "Операційний директор", image: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=256&q=80"},
-              {name: "Ольга Ковальчук", role: "Менеджер з маркетингу", image: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=256&q=80"}
+              {name: "Роман Горбачов", role: "Засновник і технічний директор", image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=256&q=80"},
+              {name: "Тимофій Білецький", role: "Засновник і директор з розвитку та маркетингу", image: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=256&q=80"},
+              {name: "Максим Гладкоскок", role: "Засновник і операційний директор", image: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=256&q=80"}
             ].map((member, index) => (
               <div key={index} className="text-center">
                 <div className="w-32 h-32 mx-auto rounded-full overflow-hidden mb-4">
