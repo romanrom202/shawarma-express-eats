@@ -28,7 +28,8 @@ export interface Order {
     address?: string | null;
     phone?: string | null;
     paymentMethod: "cash" | "card" | "online";
-    changeAmount?: string; // Для суммы, с которой нужна сдача
+    changeAmount?: string; // For change amount when paying with cash
+    deliveryFee?: number; // Added delivery fee
 }
 
 export const getStatusLabel = (status: OrderStatus): string => {

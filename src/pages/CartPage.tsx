@@ -10,6 +10,8 @@ import { createOrder } from '@/services/orderService';
 import { OrderStatus } from '@/models/Order';
 import { useAuth } from '@/hooks/useAuth';
 
+const DELIVERY_FEE = 60; // Delivery fee in UAH
+
 const CartPage: React.FC = () => {
   const { cartItems, updateQuantity, removeFromCart, totalPrice, clearCart } = useCart();
   const { user } = useAuth();
@@ -22,6 +24,9 @@ const CartPage: React.FC = () => {
   const [changeAmount, setChangeAmount] = useState('');
   const [needChange, setNeedChange] = useState(false);
   const [changeAmountError, setChangeAmountError] = useState('');
+  
+  // Calculate final price with delivery
+  const finalPrice = totalPrice + DELIVERY_FEE;
 
   const handleCheckout = () => {
     if (cartItems.length === 0) {
@@ -42,8 +47,8 @@ const CartPage: React.FC = () => {
     
     // Validate that change amount is not less than order total
     const numValue = parseFloat(value);
-    if (isNaN(numValue) || numValue < totalPrice) {
-      setChangeAmountError(`Сума має бути не менше суми замовлення (${totalPrice} ₴)`);
+    if (isNaN(numValue) || numValue < finalPrice) {
+      setChangeAmountError(`Сума має бути не менше суми замовлення з доставкою (${finalPrice} ₴)`);
     } else {
       setChangeAmountError('');
     }
@@ -72,10 +77,10 @@ const CartPage: React.FC = () => {
       }
       
       const numChangeAmount = parseFloat(changeAmount);
-      if (isNaN(numChangeAmount) || numChangeAmount < totalPrice) {
+      if (isNaN(numChangeAmount) || numChangeAmount < finalPrice) {
         toast({
           title: "Некоректна сума",
-          description: `Сума для решти має бути не менше суми замовлення (${totalPrice} ₴)`,
+          description: `Сума для решти має бути не менше суми замовлення з доставкою (${finalPrice} ₴)`,
           variant: "destructive",
         });
         return;
@@ -83,32 +88,33 @@ const CartPage: React.FC = () => {
     }
     
     try {
-      // Создаем объект заказа
+      // Create order object
       const orderData = {
         items: cartItems,
-        total: totalPrice,
+        total: finalPrice, // Include delivery fee in total
         status: OrderStatus.PENDING,
         userId: user?.uid || null,
         userEmail: user?.email || null,
         userName: user?.displayName || null,
         address: deliveryAddress,
         paymentMethod: paymentMethod as "cash" | "card" | "online",
-        changeAmount: needChange ? changeAmount : undefined
+        changeAmount: needChange ? changeAmount : undefined,
+        deliveryFee: DELIVERY_FEE
       };
       
-      // Сохраняем заказ в localStorage
+      // Save order in localStorage
       const newOrder = await createOrder(orderData);
       
-      // Показываем сообщение об успехе
+      // Show success message
       toast({
         title: "Замовлення прийнято!",
         description: "Ваше замовлення успішно оформлено та передано в обробку.",
       });
       
-      // Очищаем корзину
+      // Clear cart
       clearCart();
       
-      // Переходим на страницу успешного заказа и передаем данные заказа
+      // Navigate to success page
       navigate('/order-success', { state: { order: newOrder } });
     } catch (error) {
       console.error('Помилка при створенні замовлення:', error);
@@ -278,7 +284,7 @@ const CartPage: React.FC = () => {
                               <label className="block text-sm font-medium mb-1">З якої суми?</label>
                               <Input 
                                 type="text" 
-                                placeholder={`Мінімум ${totalPrice} ₴`}
+                                placeholder={`Мінімум ${finalPrice} ₴`}
                                 value={changeAmount}
                                 onChange={handleChangeAmountChange}
                                 className={changeAmountError ? "border-red-500" : ""}
@@ -298,11 +304,11 @@ const CartPage: React.FC = () => {
                         </div>
                         <div className="flex justify-between mb-2">
                           <span>Вартість доставки:</span>
-                          <span>0 ₴</span>
+                          <span>{DELIVERY_FEE} ₴</span>
                         </div>
                         <div className="flex justify-between font-bold text-lg">
                           <span>Разом:</span>
-                          <span>{totalPrice} ₴</span>
+                          <span>{finalPrice} ₴</span>
                         </div>
                       </div>
 
@@ -329,11 +335,11 @@ const CartPage: React.FC = () => {
                       </div>
                       <div className="flex justify-between mb-2">
                         <span>Вартість доставки:</span>
-                        <span>0 ₴</span>
+                        <span>{DELIVERY_FEE} ₴</span>
                       </div>
                       <div className="flex justify-between font-bold text-lg">
                         <span>Разом:</span>
-                        <span>{totalPrice} ₴</span>
+                        <span>{finalPrice} ₴</span>
                       </div>
                     </div>
 
