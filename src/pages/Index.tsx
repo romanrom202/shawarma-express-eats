@@ -59,7 +59,7 @@ const Index = () => {
                 </svg>
               </div>
               <h3 className="text-xl font-bold mb-2">Швидка доставка</h3>
-              <p className="text-text-light">Доставимо ваше замовлення за 30 хвилин або безкоштовно</p>
+              <p className="text-text-light">Ми гарантуємо доставку протягом 30-60 хвилин в залежності від району міста. Якщо затримуємось — компенсуємо!</p>
             </div>
             
             <div className="text-center p-6 rounded-lg bg-white shadow-sm hover:shadow-md transition-shadow">

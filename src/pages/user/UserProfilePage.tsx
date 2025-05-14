@@ -38,22 +38,28 @@ const UserProfilePage: React.FC = () => {
                 const parsedProfile = JSON.parse(savedProfile) as UserProfileData;
                 setFormData(prevData => ({
                     ...prevData,
-                    name: parsedProfile.name || prevData.name,
+                    name: parsedProfile.name || (user?.displayName || ''),
                     address: parsedProfile.address || '',
                 }));
             } catch (error) {
                 console.error('Помилка при завантаженні даних профілю:', error);
             }
+        } else if (user) {
+            // If no saved profile, use the name from registration
+            setFormData(prev => ({
+                ...prev,
+                name: user.displayName || '',
+                email: user.email || ''
+            }));
         }
-    }, []);
+    }, [user]);
 
-    // Fill email and name from Firebase Auth
+    // Fill email from Firebase Auth
     useEffect(() => {
         if (user) {
             setFormData(prev => ({
                 ...prev,
-                email: user.email || '',
-                name: user.displayName || prev.name
+                email: user.email || ''
             }));
         }
     }, [user]);

@@ -26,6 +26,8 @@ const AdminProductsPage: React.FC = () => {
   const [products, setProducts] = useState<Product[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const [currentProduct, setCurrentProduct] = useState<Product | null>(null);
   const [newProduct, setNewProduct] = useState<Partial<Product>>({
     name: '',
     description: '',
@@ -78,6 +80,36 @@ const AdminProductsPage: React.FC = () => {
     });
   };
 
+  const handleEditProduct = (product: Product) => {
+    setCurrentProduct(product);
+    setIsEditDialogOpen(true);
+  };
+
+  const handleUpdateProduct = () => {
+    if (!currentProduct) return;
+    
+    // Находим индекс товара в массиве
+    const productIndex = products.findIndex(p => p.id === currentProduct.id);
+    if (productIndex === -1) return;
+    
+    // Создаем обновленный массив товаров
+    const updatedProducts = [...products];
+    updatedProducts[productIndex] = currentProduct;
+    
+    // Обновляем состояние и localStorage
+    setProducts(updatedProducts);
+    localStorage.setItem(PRODUCTS_STORAGE_KEY, JSON.stringify(updatedProducts));
+    
+    // Закрываем диалог и сбрасываем выбранный товар
+    setIsEditDialogOpen(false);
+    setCurrentProduct(null);
+    
+    toast({
+      title: "Товар оновлено",
+      description: "Товар було успішно оновлено",
+    });
+  };
+
   const handleAddProduct = () => {
     if (!newProduct.name || !newProduct.description || !newProduct.price || !newProduct.imageUrl) {
       toast({
@@ -127,9 +159,28 @@ const AdminProductsPage: React.FC = () => {
     }));
   };
 
+  const handleEditInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    if (!currentProduct) return;
+    
+    const { name, value } = e.target;
+    setCurrentProduct(prev => ({
+      ...prev!,
+      [name]: value
+    }));
+  };
+
   const handleCategoryChange = (value: string) => {
     setNewProduct(prev => ({
       ...prev,
+      category: value
+    }));
+  };
+
+  const handleEditCategoryChange = (value: string) => {
+    if (!currentProduct) return;
+    
+    setCurrentProduct(prev => ({
+      ...prev!,
       category: value
     }));
   };
@@ -202,7 +253,11 @@ const AdminProductsPage: React.FC = () => {
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                     <div className="flex justify-end space-x-2">
-                      <Button variant="ghost" size="sm">
+                      <Button 
+                        variant="ghost" 
+                        size="sm" 
+                        onClick={() => handleEditProduct(product)}
+                      >
                         <Edit className="h-4 w-4" />
                       </Button>
                       <Button 
@@ -328,6 +383,106 @@ const AdminProductsPage: React.FC = () => {
             <Button type="button" onClick={handleAddProduct}>
               <Save className="h-4 w-4 mr-2" />
               Зберегти товар
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Dialog for editing product */}
+      <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
+        <DialogContent className="sm:max-w-lg">
+          <DialogHeader>
+            <DialogTitle>Редагувати товар</DialogTitle>
+          </DialogHeader>
+          
+          {currentProduct && (
+            <div className="grid gap-4 py-4">
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="edit-name" className="text-right">
+                  Назва
+                </Label>
+                <Input
+                  id="edit-name"
+                  name="name"
+                  value={currentProduct.name}
+                  onChange={handleEditInputChange}
+                  className="col-span-3"
+                />
+              </div>
+              
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="edit-price" className="text-right">
+                  Ціна
+                </Label>
+                <Input
+                  id="edit-price"
+                  name="price"
+                  type="number"
+                  value={currentProduct.price}
+                  onChange={handleEditInputChange}
+                  className="col-span-3"
+                />
+              </div>
+
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="edit-category" className="text-right">
+                  Категорія
+                </Label>
+                <Select 
+                  value={currentProduct.category} 
+                  onValueChange={handleEditCategoryChange}
+                >
+                  <SelectTrigger className="col-span-3">
+                    <SelectValue placeholder="Виберіть категорію" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {categories.map(category => (
+                      <SelectItem key={category} value={category}>
+                        {category}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="edit-imageUrl" className="text-right">
+                  URL зображення
+                </Label>
+                <Input
+                  id="edit-imageUrl"
+                  name="imageUrl"
+                  value={currentProduct.imageUrl}
+                  onChange={handleEditInputChange}
+                  className="col-span-3"
+                />
+              </div>
+              
+              <div className="grid grid-cols-4 items-start gap-4">
+                <Label htmlFor="edit-description" className="text-right">
+                  Опис
+                </Label>
+                <Textarea
+                  id="edit-description"
+                  name="description"
+                  value={currentProduct.description}
+                  onChange={handleEditInputChange}
+                  className="col-span-3"
+                  rows={3}
+                />
+              </div>
+            </div>
+          )}
+          
+          <DialogFooter>
+            <DialogClose asChild>
+              <Button type="button" variant="outline">
+                Скасувати
+              </Button>
+            </DialogClose>
+            <Button type="button" onClick={handleUpdateProduct}>
+              <Save className="h-4 w-4 mr-2" />
+              Оновити товар
             </Button>
           </DialogFooter>
         </DialogContent>
