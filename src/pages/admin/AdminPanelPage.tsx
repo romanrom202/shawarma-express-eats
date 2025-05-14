@@ -17,7 +17,7 @@ const AdminPanelPage: React.FC = () => {
 
     // Calculate order statistics
     const totalOrders = orders?.length || 0;
-    const pendingOrders = orders?.filter(o => o.status === OrderStatus.PENDING || o.status === OrderStatus.ACCEPTED).length || 0;
+    const pendingOrders = orders?.filter(o => o.status === OrderStatus.ACCEPTED).length || 0;
     const preparingOrders = orders?.filter(o => o.status === OrderStatus.PREPARING).length || 0;
     const deliveringOrders = orders?.filter(o => o.status === OrderStatus.DELIVERING).length || 0;
     const completedOrders = orders?.filter(o => o.status === OrderStatus.DELIVERED).length || 0;
@@ -134,7 +134,6 @@ const AdminPanelPage: React.FC = () => {
                                         let statusColor;
 
                                         switch (order.status) {
-                                            case OrderStatus.PENDING:
                                             case OrderStatus.ACCEPTED:
                                                 statusIcon = <Clock className="h-4 w-4" />;
                                                 statusColor = "text-blue-600";
@@ -174,11 +173,10 @@ const AdminPanelPage: React.FC = () => {
                                                     <div className={`flex items-center ${statusColor}`}>
                                                         {statusIcon}
                                                         <span className="ml-1">
-                                                            {order.status === OrderStatus.PENDING ? 'Очікує' :
-                                                                order.status === OrderStatus.ACCEPTED ? 'Прийнято' :
-                                                                    order.status === OrderStatus.PREPARING ? 'Готується' :
-                                                                        order.status === OrderStatus.DELIVERING ? 'Доставка' :
-                                                                            order.status === OrderStatus.DELIVERED ? 'Доставлено' : 'Скасовано'}
+                                                            {order.status === OrderStatus.ACCEPTED ? 'Прийнято' :
+                                                                order.status === OrderStatus.PREPARING ? 'Готується' :
+                                                                    order.status === OrderStatus.DELIVERING ? 'Доставка' :
+                                                                        order.status === OrderStatus.DELIVERED ? 'Доставлено' : 'Скасовано'}
                                                           </span>
                                                     </div>
                                                 </td>
