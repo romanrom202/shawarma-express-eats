@@ -1,6 +1,5 @@
 
 export enum OrderStatus {
-    PENDING = "pending",
     ACCEPTED = "accepted",
     PREPARING = "preparing",
     DELIVERING = "delivering",
@@ -34,8 +33,6 @@ export interface Order {
 
 export const getStatusLabel = (status: OrderStatus): string => {
     switch (status) {
-        case OrderStatus.PENDING:
-            return "Очікує підтвердження";
         case OrderStatus.ACCEPTED:
             return "Прийнято";
         case OrderStatus.PREPARING:
@@ -53,8 +50,6 @@ export const getStatusLabel = (status: OrderStatus): string => {
 
 export const getStatusColor = (status: OrderStatus): string => {
     switch (status) {
-        case OrderStatus.PENDING:
-            return "bg-yellow-100 text-yellow-800";
         case OrderStatus.ACCEPTED:
             return "bg-blue-100 text-blue-800";
         case OrderStatus.PREPARING:

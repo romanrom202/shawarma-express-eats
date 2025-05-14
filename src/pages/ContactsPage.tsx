@@ -7,13 +7,13 @@ const ContactsPage: React.FC = () => {
   return (
     <MainLayout>
       <div className="container mx-auto px-4 py-12">
-        <div className="max-w-4xl mx-auto">
+        <div className="max-w-4xl mx-auto text-center">
           <h1 className="text-4xl font-bold mb-6 text-text">Контакти</h1>
           <Separator className="my-6" />
           
           <div className="mb-12">
             <h2 className="text-2xl font-bold mb-6 text-text">Зв'яжіться з нами</h2>
-            <div className="space-y-4 mb-8">
+            <div className="space-y-4 mb-8 flex flex-col items-center">
               <div className="flex items-start">
                 <div className="mr-4 mt-1 w-12 h-12 flex items-center justify-center rounded-full bg-primary/10 text-primary flex-shrink-0">
                   <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -67,22 +67,10 @@ const ContactsPage: React.FC = () => {
                 </div>
               </div>
             </div>
-            
-            <h3 className="font-bold mb-4">Слідкуйте за нами</h3>
-            <div className="flex space-x-4">
-              {['Facebook', 'Instagram', 'Twitter', 'YouTube'].map((social) => (
-                <a key={social} href="#" className="flex items-center justify-center w-10 h-10 rounded-full bg-gray-100 hover:bg-primary hover:text-white transition-colors">
-                  <span className="sr-only">{social}</span>
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
-                  </svg>
-                </a>
-              ))}
-            </div>
           </div>
           
-          <h2 className="text-2xl font-bold mb-6 text-text text-center">Наші заклади</h2>
-          <div className="grid grid-cols-1 gap-6 mb-12">
+          <h2 className="text-2xl font-bold mb-6 text-text">Наші заклади</h2>
+          <div className="max-w-md mx-auto mb-12">
             <div className="bg-white p-4 rounded-lg shadow-sm border border-gray-100">
               <h3 className="font-bold mb-2">Хрещатик</h3>
               <p className="text-text-light text-sm mb-1">вул. Хрещатик, 22</p>

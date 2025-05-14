@@ -13,7 +13,7 @@ import {
     TableHeader,
     TableRow,
 } from '@/components/ui/table';
-import { Check, Clock, Loader2, Truck, X } from 'lucide-react';
+import { Loader2, Truck, X } from 'lucide-react';
 import { format } from 'date-fns';
 import { useToast } from '@/components/ui/use-toast';
 import {
@@ -108,7 +108,6 @@ const AdminOrdersPage: React.FC = () => {
                                                     <SelectValue placeholder={getStatusLabel(order.status)} />
                                                 </SelectTrigger>
                                                 <SelectContent>
-                                                    <SelectItem value={OrderStatus.PENDING}>Очікує</SelectItem>
                                                     <SelectItem value={OrderStatus.ACCEPTED}>Прийнято</SelectItem>
                                                     <SelectItem value={OrderStatus.PREPARING}>Готується</SelectItem>
                                                     <SelectItem value={OrderStatus.DELIVERING}>Доставляється</SelectItem>
@@ -240,15 +239,6 @@ const AdminOrdersPage: React.FC = () => {
                                     <Button
                                         variant="outline"
                                         size="sm"
-                                        className="bg-green-100 text-green-700 border-green-200 hover:bg-green-200"
-                                        onClick={() => handleStatusChange(selectedOrder.id, OrderStatus.DELIVERED)}
-                                        disabled={selectedOrder.status === OrderStatus.DELIVERED || selectedOrder.status === OrderStatus.CANCELLED}
-                                    >
-                                        <Check className="h-4 w-4 mr-1" /> Доставлено
-                                    </Button>
-                                    <Button
-                                        variant="outline"
-                                        size="sm"
                                         className="bg-red-100 text-red-700 border-red-200 hover:bg-red-200"
                                         onClick={() => handleStatusChange(selectedOrder.id, OrderStatus.CANCELLED)}
                                         disabled={selectedOrder.status === OrderStatus.DELIVERED || selectedOrder.status === OrderStatus.CANCELLED}
@@ -265,7 +255,6 @@ const AdminOrdersPage: React.FC = () => {
                                         <SelectValue placeholder="Змінити статус" />
                                     </SelectTrigger>
                                     <SelectContent>
-                                        <SelectItem value={OrderStatus.PENDING}>Очікує</SelectItem>
                                         <SelectItem value={OrderStatus.ACCEPTED}>Прийнято</SelectItem>
                                         <SelectItem value={OrderStatus.PREPARING}>Готується</SelectItem>
                                         <SelectItem value={OrderStatus.DELIVERING}>Доставляється</SelectItem>

@@ -92,7 +92,7 @@ const OrderHistoryPage: React.FC = () => {
                                         </div>
                                     </div>
 
-                                    <div className="bg-gray-50 px-6 py-3 flex justify-between items-center">
+                                    <div className="bg-gray-50 px-6 py-3">
                                         <div className="text-sm text-text-muted">
                                             Спосіб оплати: <span className="font-medium">
                                             {order.paymentMethod === 'cash' 
@@ -104,9 +104,6 @@ const OrderHistoryPage: React.FC = () => {
                                                 : 'Онлайн оплата'}
                                           </span>
                                         </div>
-                                        <Button variant="outline" size="sm">
-                                            Деталі
-                                        </Button>
                                     </div>
                                 </div>
                             ))}

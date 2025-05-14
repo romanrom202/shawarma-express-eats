@@ -9,10 +9,10 @@ import { User as UserIcon, Save } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/components/ui/use-toast';
 
-// Ключ для хранения данных профиля в localStorage
+// Key for storing profile data in localStorage
 const PROFILE_STORAGE_KEY = "shawarma_timaro_user_profile";
 
-// Интерфейс для данных профиля
+// Interface for profile data
 interface UserProfileData {
     name: string;
     email: string;
@@ -23,14 +23,14 @@ const UserProfilePage: React.FC = () => {
     const { user } = useAuth();
     const { toast } = useToast();
     
-    // Стан для форми профілю
+    // Profile form state
     const [formData, setFormData] = useState<UserProfileData>({
-        name: 'Іван Петренко',
+        name: '',
         email: '',
-        address: 'вул. Центральна, 123, м. Київ'
+        address: ''
     });
 
-    // Загружаем сохраненные данные профиля из localStorage при монтировании
+    // Load saved profile data from localStorage on mount
     useEffect(() => {
         const savedProfile = localStorage.getItem(PROFILE_STORAGE_KEY);
         if (savedProfile) {
@@ -39,7 +39,7 @@ const UserProfilePage: React.FC = () => {
                 setFormData(prevData => ({
                     ...prevData,
                     name: parsedProfile.name || prevData.name,
-                    address: parsedProfile.address || prevData.address,
+                    address: parsedProfile.address || '',
                 }));
             } catch (error) {
                 console.error('Помилка при завантаженні даних профілю:', error);
@@ -47,12 +47,13 @@ const UserProfilePage: React.FC = () => {
         }
     }, []);
 
-    // Заповнюємо email з Firebase Auth
+    // Fill email and name from Firebase Auth
     useEffect(() => {
         if (user) {
             setFormData(prev => ({
                 ...prev,
-                email: user.email || ''
+                email: user.email || '',
+                name: user.displayName || prev.name
             }));
         }
     }, [user]);
@@ -68,10 +69,10 @@ const UserProfilePage: React.FC = () => {
     const handleSave = (e: React.FormEvent) => {
         e.preventDefault();
 
-        // Сохраняем данные в localStorage
+        // Save data to localStorage
         localStorage.setItem(PROFILE_STORAGE_KEY, JSON.stringify(formData));
         
-        // Показываем сообщение об успехе
+        // Show success message
         toast({
             title: "Зміни збережено",
             description: "Ваші особисті дані було успішно оновлено.",
@@ -123,6 +124,7 @@ const UserProfilePage: React.FC = () => {
                                     id="address" 
                                     value={formData.address}
                                     onChange={handleChange}
+                                    placeholder="Введіть вашу адресу доставки"
                                 />
                             </div>
 
@@ -148,16 +150,6 @@ const UserProfilePage: React.FC = () => {
                                 <Link to="/auth/forgot-password">
                                     <Button variant="outline">Змінити пароль</Button>
                                 </Link>
-                            </div>
-
-                            <div className="border-t border-gray-200 pt-6">
-                                <div className="flex justify-between items-center">
-                                    <div>
-                                        <h3 className="font-medium text-red-600">Видалення акаунта</h3>
-                                        <p className="text-sm text-text-muted">Видаліть ваш обліковий запис і всі пов'язані з ним дані</p>
-                                    </div>
-                                    <Button variant="destructive">Видалити акаунт</Button>
-                                </div>
                             </div>
                         </div>
                     </div>

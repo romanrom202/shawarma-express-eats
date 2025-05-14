@@ -65,20 +65,9 @@ export const CartProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     });
   };
   
+  // Modified to remove item completely regardless of quantity
   const removeFromCart = (productId: number) => {
-    setCartItems(prevItems => {
-      const existingItem = prevItems.find(item => item.id === productId);
-      
-      if (existingItem && existingItem.quantity > 1) {
-        return prevItems.map(item =>
-          item.id === productId
-            ? { ...item, quantity: item.quantity - 1 }
-            : item
-        );
-      } else {
-        return prevItems.filter(item => item.id !== productId);
-      }
-    });
+    setCartItems(prevItems => prevItems.filter(item => item.id !== productId));
   };
   
   const updateQuantity = (productId: number, quantity: number) => {
