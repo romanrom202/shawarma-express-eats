@@ -1,26 +1,47 @@
 
 import { db } from "@/lib/firebase";
-import { collection, doc, addDoc, updateDoc, getDocs, getDoc, query, where, orderBy } from "firebase/firestore";
+import { 
+  collection, 
+  doc, 
+  addDoc, 
+  updateDoc, 
+  getDoc, 
+  getDocs, 
+  query, 
+  where, 
+  orderBy, 
+  limit,
+  runTransaction 
+} from "firebase/firestore";
 import { Order, OrderItem, OrderStatus } from "@/models/Order";
 
 const ORDERS_COLLECTION = "orders";
+const COUNTERS_COLLECTION = "counters";
+const ORDER_COUNTER_ID = "orderCounter";
 
-// Create a new order
+// Create a new order with sequential ID
 export const createOrder = async (orderData: Omit<Order, 'id' | 'createdAt'>): Promise<Order> => {
   try {
+    // Generate sequential order number
+    const orderNumber = await getNextOrderNumber();
+    
+    // Format order ID
+    const orderId = `ORD-${orderNumber}`;
+    
     // Add createdAt field
     const orderWithTimestamp = {
       ...orderData,
+      id: orderId,
       createdAt: new Date().toISOString()
     };
     
     // Add to Firestore
-    const docRef = await addDoc(collection(db, ORDERS_COLLECTION), orderWithTimestamp);
+    await setDoc(doc(db, ORDERS_COLLECTION, orderId), orderWithTimestamp);
     
-    // Return the created order with the Firestore ID
+    // Return the created order with the sequential Firestore ID
     const newOrder: Order = {
       ...orderWithTimestamp,
-      id: docRef.id
+      id: orderId
     };
     
     // Also save to localStorage for offline access
@@ -30,8 +51,36 @@ export const createOrder = async (orderData: Omit<Order, 'id' | 'createdAt'>): P
   } catch (error) {
     console.error("Error creating order:", error);
     
-    // Fallback to localStorage only
+    // Fallback to localStorage only with sequential ID
     return createOrderLocally(orderData);
+  }
+};
+
+// Get next order number from counter collection
+const getNextOrderNumber = async (): Promise<number> => {
+  const counterRef = doc(db, COUNTERS_COLLECTION, ORDER_COUNTER_ID);
+  
+  try {
+    // Use transaction to ensure sequential numbering
+    const orderNumber = await runTransaction(db, async (transaction) => {
+      const counterDoc = await transaction.get(counterRef);
+      
+      if (!counterDoc.exists()) {
+        // Initialize counter if it doesn't exist
+        transaction.set(counterRef, { value: 32801 });
+        return 32801;
+      }
+      
+      const newValue = counterDoc.data().value + 1;
+      transaction.update(counterRef, { value: newValue });
+      return newValue;
+    });
+    
+    return orderNumber;
+  } catch (error) {
+    console.error("Failed to get next order number:", error);
+    // Fallback to timestamp-based number
+    return Math.floor(32800 + Date.now() % 10000);
   }
 };
 
@@ -45,8 +94,8 @@ export const getAllOrders = async (): Promise<Order[]> => {
     
     const querySnapshot = await getDocs(q);
     return querySnapshot.docs.map(doc => ({
-      id: doc.id,
-      ...doc.data()
+      ...doc.data(),
+      id: doc.id
     } as Order));
   } catch (error) {
     console.error("Error getting all orders:", error);
@@ -67,8 +116,8 @@ export const getUserOrders = async (userId: string): Promise<Order[]> => {
     
     const querySnapshot = await getDocs(q);
     return querySnapshot.docs.map(doc => ({
-      id: doc.id,
-      ...doc.data()
+      ...doc.data(),
+      id: doc.id
     } as Order));
   } catch (error) {
     console.error("Error getting user orders:", error);
@@ -86,8 +135,8 @@ export const getOrderById = async (orderId: string): Promise<Order | null> => {
     
     if (orderDoc.exists()) {
       return {
-        id: orderDoc.id,
-        ...orderDoc.data()
+        ...orderDoc.data(),
+        id: orderDoc.id
       } as Order;
     }
     return null;
@@ -109,8 +158,8 @@ export const updateOrderStatus = async (orderId: string, status: OrderStatus): P
     // Get updated order
     const updatedDoc = await getDoc(orderRef);
     const updatedOrder = {
-      id: orderId,
-      ...updatedDoc.data()
+      ...updatedDoc.data(),
+      id: orderId
     } as Order;
     
     // Update in localStorage too
@@ -125,13 +174,48 @@ export const updateOrderStatus = async (orderId: string, status: OrderStatus): P
   }
 };
 
+// Helper function for creating/updating documents
+const setDoc = async (docRef: any, data: any) => {
+  try {
+    // Check if document exists
+    const docSnap = await getDoc(docRef);
+    
+    if (docSnap.exists()) {
+      await updateDoc(docRef, data);
+    } else {
+      await addDoc(collection(db, ORDERS_COLLECTION), data);
+    }
+  } catch (error) {
+    console.error("Error in setDoc:", error);
+    throw error;
+  }
+};
+
 // Helper functions for localStorage operations
 
-// Create order in localStorage
-function createOrderLocally(orderData: Omit<Order, 'id' | 'createdAt'>): Order {
+// Create order in localStorage with sequential ID
+async function createOrderLocally(orderData: Omit<Order, 'id' | 'createdAt'>): Promise<Order> {
+  // Try to get the latest order number from localStorage
+  const orders = getOrdersFromLocalStorage();
+  let nextNumber = 32801;
+  
+  if (orders.length > 0) {
+    // Extract numbers from order IDs
+    const orderNumbers = orders
+      .map(order => {
+        const match = order.id.match(/ORD-(\d+)/);
+        return match ? parseInt(match[1]) : 0;
+      })
+      .filter(num => !isNaN(num));
+    
+    if (orderNumbers.length > 0) {
+      nextNumber = Math.max(...orderNumbers) + 1;
+    }
+  }
+  
   const newOrder: Order = {
     ...orderData,
-    id: "ORD-" + Math.floor(10000 + Math.random() * 90000),
+    id: `ORD-${nextNumber}`,
     createdAt: new Date().toISOString()
   };
   
@@ -162,7 +246,15 @@ function updateOrderStatusLocally(orderId: string, status: OrderStatus): Order {
 // Save order to localStorage
 function saveOrderToLocalStorage(order: Order): void {
   const orders = getOrdersFromLocalStorage();
-  orders.push(order);
+  // Check if the order already exists
+  const existingOrderIndex = orders.findIndex(o => o.id === order.id);
+  
+  if (existingOrderIndex !== -1) {
+    orders[existingOrderIndex] = order;
+  } else {
+    orders.push(order);
+  }
+  
   localStorage.setItem("shawarma_timaro_orders", JSON.stringify(orders));
 }
 
@@ -202,9 +294,25 @@ export const initializeOrders = async (): Promise<void> => {
       // Add all orders to Firestore
       for (const order of orders) {
         const { id, ...orderWithoutId } = order;
-        await addDoc(collection(db, ORDERS_COLLECTION), orderWithoutId);
+        await setDoc(doc(db, ORDERS_COLLECTION, id), orderWithoutId);
       }
       console.log("Orders initialized from localStorage");
+      
+      // Initialize order counter
+      if (orders.length > 0) {
+        // Extract max order number
+        const orderNumbers = orders
+          .map(order => {
+            const match = order.id.match(/ORD-(\d+)/);
+            return match ? parseInt(match[1]) : 0;
+          })
+          .filter(num => !isNaN(num));
+        
+        if (orderNumbers.length > 0) {
+          const maxNumber = Math.max(...orderNumbers);
+          await setDoc(doc(db, COUNTERS_COLLECTION, ORDER_COUNTER_ID), { value: maxNumber });
+        }
+      }
     }
   } catch (error) {
     console.error("Error initializing orders:", error);

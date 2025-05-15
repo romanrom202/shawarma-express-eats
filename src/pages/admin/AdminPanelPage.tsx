@@ -2,7 +2,7 @@
 import React from 'react';
 import AdminLayout from '@/components/layouts/AdminLayout';
 import { useQuery } from '@tanstack/react-query';
-import { getAllOrders } from '@/services/orderService';
+import { getAllOrders } from '@/services/firebaseOrderService';
 import { OrderStatus } from '@/models/Order';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Check, Clock, ShoppingBag, Truck, X } from 'lucide-react';
@@ -167,7 +167,7 @@ const AdminPanelPage: React.FC = () => {
                                                         minute: '2-digit'
                                                     })}
                                                 </td>
-                                                <td className="py-3 px-4">{order.userName || 'Гість'}</td>
+                                                <td className="py-3 px-4">{order.userName || order.userEmail || 'Гість'}</td>
                                                 <td className="py-3 px-4">{order.total} ₴</td>
                                                 <td className="py-3 px-4">
                                                     <div className={`flex items-center ${statusColor}`}>

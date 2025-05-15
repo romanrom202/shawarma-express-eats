@@ -2,22 +2,50 @@
 import React from 'react';
 import { useQuery } from '@tanstack/react-query';
 import MainLayout from '@/components/layouts/MainLayout';
-import { getUserOrders } from '@/services/orderService';
+import { getUserOrders } from '@/services/firebaseOrderService';
 import { OrderStatus, getStatusColor, getStatusLabel } from '@/models/Order';
 import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
 import { format } from 'date-fns';
-import { Loader2 } from 'lucide-react';
+import { Loader2, LogIn } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 
 const OrderHistoryPage: React.FC = () => {
     const { user } = useAuth();
-    const userId = user?.uid || "guest"; // Используем guest для неавторизованных пользователей
 
     const { data: orders, isLoading, error } = useQuery({
-        queryKey: ['orders', userId],
-        queryFn: () => getUserOrders(userId),
+        queryKey: ['orders', user?.uid],
+        queryFn: () => user?.uid ? getUserOrders(user.uid) : Promise.resolve([]),
+        enabled: !!user, // Only run query when user is logged in
     });
+
+    // If user is not logged in, show login prompt
+    if (!user) {
+        return (
+            <MainLayout>
+                <div className="container mx-auto px-4 py-12">
+                    <div className="max-w-5xl mx-auto">
+                        <div className="flex items-center justify-between mb-8">
+                            <h1 className="text-3xl font-bold">Історія замовлень</h1>
+                        </div>
+                        
+                        <div className="bg-white rounded-lg shadow-md p-12 text-center">
+                            <h3 className="text-lg font-medium mb-4">Увійдіть у свій акаунт</h3>
+                            <p className="text-text-muted mb-6">
+                                Щоб переглянути історію своїх замовлень, будь ласка, увійдіть у свій акаунт
+                            </p>
+                            <Link to="/auth/login">
+                                <Button className="bg-primary hover:bg-primary-dark">
+                                    <LogIn className="h-4 w-4 mr-2" />
+                                    Увійти в акаунт
+                                </Button>
+                            </Link>
+                        </div>
+                    </div>
+                </div>
+            </MainLayout>
+        );
+    }
 
     return (
         <MainLayout>

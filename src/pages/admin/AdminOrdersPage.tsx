@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import AdminLayout from '@/components/layouts/AdminLayout';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { getAllOrders, updateOrderStatus } from '@/services/orderService';
+import { getAllOrders, updateOrderStatus } from '@/services/firebaseOrderService';
 import { Order, OrderStatus, getStatusColor, getStatusLabel } from '@/models/Order';
 import { Button } from '@/components/ui/button';
 import {
@@ -235,7 +235,7 @@ const AdminOrdersPage: React.FC = () => {
                             </div>
 
                             <div className="flex justify-between items-center pt-4 border-t">
-                                <div className="space-x-2">
+                                <div>
                                     <Button
                                         variant="outline"
                                         size="sm"

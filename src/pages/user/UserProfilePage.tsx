@@ -8,61 +8,30 @@ import { Link } from 'react-router-dom';
 import { User as UserIcon, Save } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/components/ui/use-toast';
-
-// Key for storing profile data in localStorage
-const PROFILE_STORAGE_KEY = "shawarma_timaro_user_profile";
-
-// Interface for profile data
-interface UserProfileData {
-    name: string;
-    email: string;
-    address: string;
-}
+import { updateUserProfile } from '@/services/firebaseUserService';
 
 const UserProfilePage: React.FC = () => {
-    const { user } = useAuth();
+    const { user, userProfile, updateUserData } = useAuth();
     const { toast } = useToast();
     
     // Profile form state
-    const [formData, setFormData] = useState<UserProfileData>({
+    const [formData, setFormData] = useState({
         name: '',
         email: '',
         address: ''
     });
 
-    // Load saved profile data from localStorage on mount
-    useEffect(() => {
-        const savedProfile = localStorage.getItem(PROFILE_STORAGE_KEY);
-        if (savedProfile) {
-            try {
-                const parsedProfile = JSON.parse(savedProfile) as UserProfileData;
-                setFormData(prevData => ({
-                    ...prevData,
-                    name: parsedProfile.name || (user?.displayName || ''),
-                    address: parsedProfile.address || '',
-                }));
-            } catch (error) {
-                console.error('Помилка при завантаженні даних профілю:', error);
-            }
-        } else if (user) {
-            // If no saved profile, use the name from registration
-            setFormData(prev => ({
-                ...prev,
-                name: user.displayName || '',
-                email: user.email || ''
-            }));
-        }
-    }, [user]);
-
-    // Fill email from Firebase Auth
+    // Load profile data from Firebase auth and userProfile
     useEffect(() => {
         if (user) {
             setFormData(prev => ({
                 ...prev,
-                email: user.email || ''
+                name: userProfile?.displayName || user.displayName || '',
+                email: user.email || '',
+                address: userProfile?.address || ''
             }));
         }
-    }, [user]);
+    }, [user, userProfile]);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { id, value } = e.target;
@@ -72,17 +41,38 @@ const UserProfilePage: React.FC = () => {
         }));
     };
 
-    const handleSave = (e: React.FormEvent) => {
+    const handleSave = async (e: React.FormEvent) => {
         e.preventDefault();
 
-        // Save data to localStorage
-        localStorage.setItem(PROFILE_STORAGE_KEY, JSON.stringify(formData));
-        
-        // Show success message
-        toast({
-            title: "Зміни збережено",
-            description: "Ваші особисті дані було успішно оновлено.",
-        });
+        if (!user) {
+            toast({
+                title: "Помилка",
+                description: "Ви повинні бути авторизовані для зміни профілю",
+                variant: "destructive"
+            });
+            return;
+        }
+
+        try {
+            // Update profile in Firebase
+            await updateUserData({
+                displayName: formData.name,
+                address: formData.address
+            });
+            
+            // Show success message
+            toast({
+                title: "Зміни збережено",
+                description: "Ваші особисті дані було успішно оновлено.",
+            });
+        } catch (error) {
+            console.error("Error saving profile:", error);
+            toast({
+                title: "Помилка",
+                description: "Не вдалося зберегти зміни профілю",
+                variant: "destructive"
+            });
+        }
     };
 
     return (

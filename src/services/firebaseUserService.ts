@@ -1,6 +1,6 @@
 
 import { db, auth } from "@/lib/firebase";
-import { doc, getDoc, setDoc, updateDoc } from "firebase/firestore";
+import { doc, getDoc, setDoc, updateDoc, collection, query, where, getDocs } from "firebase/firestore";
 import { User } from "firebase/auth";
 
 interface UserProfile {
@@ -93,5 +93,17 @@ export const updateUserProfile = async (
   } catch (error) {
     console.error("Error updating user profile:", error);
     throw new Error("Failed to update profile");
+  }
+};
+
+// Get all users
+export const getAllUsers = async (): Promise<UserProfile[]> => {
+  try {
+    const usersQuery = query(collection(db, USERS_COLLECTION));
+    const querySnapshot = await getDocs(usersQuery);
+    return querySnapshot.docs.map(doc => doc.data() as UserProfile);
+  } catch (error) {
+    console.error("Error getting all users:", error);
+    return [];
   }
 };

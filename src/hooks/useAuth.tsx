@@ -11,7 +11,7 @@ import {
     updateProfile
 } from "firebase/auth";
 import { auth } from "@/lib/firebase";
-import { createOrUpdateUser, getUserProfile } from "@/services/firebaseUserService";
+import { createOrUpdateUser, getUserProfile, updateUserProfile } from "@/services/firebaseUserService";
 
 interface AuthContextType {
     user: User | null;
@@ -73,6 +73,9 @@ export const AuthProvider: React.FC<React.PropsWithChildren> = ({ children }) =>
         // Set display name if provided
         if (name && result.user) {
             await updateProfile(result.user, { displayName: name });
+            
+            // Also update the Firestore profile
+            await createOrUpdateUser(result.user);
         }
     };
 
@@ -93,25 +96,16 @@ export const AuthProvider: React.FC<React.PropsWithChildren> = ({ children }) =>
         }
         
         // Update user profile in Firestore
-        const updateData: Record<string, string> = {};
+        const updateData: Record<string, string | null> = {};
         if (data.displayName) updateData.displayName = data.displayName;
         if (data.address !== undefined) updateData.address = data.address || null;
         if (data.phone !== undefined) updateData.phone = data.phone || null;
         
         try {
-            await fetch(`https://identitytoolkit.googleapis.com/v1/accounts:update?key=${auth.app.options.apiKey}`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    idToken: await user.getIdToken(),
-                    displayName: data.displayName || user.displayName,
-                    returnSecureToken: true,
-                }),
-            });
+            // Update Firestore profile
+            await updateUserProfile(user.uid, updateData);
             
-            // Update the local userProfile state
+            // Update local state
             setUserProfile(prev => ({
                 ...prev!,
                 ...updateData

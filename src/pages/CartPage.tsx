@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import MainLayout from '@/components/layouts/MainLayout';
@@ -7,16 +6,15 @@ import { Input } from '@/components/ui/input';
 import { useCart } from '@/hooks/useCart';
 import { Plus, Minus, Trash2 } from 'lucide-react';
 import { useToast } from "@/components/ui/use-toast";
-import { createOrder } from '@/services/orderService';
+import { createOrder } from '@/services/firebaseOrderService';
 import { OrderStatus } from '@/models/Order';
 import { useAuth } from '@/hooks/useAuth';
 
 const DELIVERY_FEE = 60; // Delivery fee in UAH
-const PROFILE_STORAGE_KEY = "shawarma_timaro_user_profile";
 
 const CartPage: React.FC = () => {
   const { cartItems, updateQuantity, removeFromCart, totalPrice, clearCart } = useCart();
-  const { user } = useAuth();
+  const { user, userProfile } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
   
@@ -32,20 +30,10 @@ const CartPage: React.FC = () => {
 
   // Load saved address from user profile
   useEffect(() => {
-    if (isCheckingOut) {
-      const savedProfile = localStorage.getItem(PROFILE_STORAGE_KEY);
-      if (savedProfile) {
-        try {
-          const parsedProfile = JSON.parse(savedProfile);
-          if (parsedProfile.address) {
-            setDeliveryAddress(parsedProfile.address);
-          }
-        } catch (error) {
-          console.error('Error loading profile data:', error);
-        }
-      }
+    if (isCheckingOut && userProfile?.address) {
+      setDeliveryAddress(userProfile.address);
     }
-  }, [isCheckingOut]);
+  }, [isCheckingOut, userProfile]);
 
   const handleCheckout = () => {
     if (cartItems.length === 0) {
@@ -114,7 +102,7 @@ const CartPage: React.FC = () => {
         status: OrderStatus.ACCEPTED, // Change to ACCEPTED by default
         userId: user?.uid || null,
         userEmail: user?.email || null,
-        userName: user?.displayName || null,
+        userName: user?.displayName || userProfile?.displayName || null,
         address: deliveryAddress,
         paymentMethod: paymentMethod as "cash" | "card" | "online",
         changeAmount: needChange ? changeAmount : undefined,
@@ -340,7 +328,7 @@ const CartPage: React.FC = () => {
                           variant="outline"
                           onClick={() => setIsCheckingOut(false)}
                         >
-                          Повернутися до кошика
+                          П��вернутися до кошика
                         </Button>
                       </div>
                     </div>
