@@ -1,4 +1,3 @@
-
 import { db } from "@/lib/firebase";
 import { 
   collection, 
@@ -11,7 +10,8 @@ import {
   where, 
   orderBy, 
   limit,
-  runTransaction 
+  runTransaction,
+  setDoc as firestoreSetDoc 
 } from "firebase/firestore";
 import { Order, OrderItem, OrderStatus } from "@/models/Order";
 
@@ -35,10 +35,12 @@ export const createOrder = async (orderData: Omit<Order, 'id' | 'createdAt'>): P
       createdAt: new Date().toISOString()
     };
     
-    // Add to Firestore
-    await setDoc(doc(db, ORDERS_COLLECTION, orderId), orderWithTimestamp);
+    // Add to Firestore - use setDoc with merge option to ensure doc ID is preserved
+    await firestoreSetDoc(doc(db, ORDERS_COLLECTION, orderId), orderWithTimestamp);
     
-    // Return the created order with the sequential Firestore ID
+    console.log("Order created successfully:", orderId);
+    
+    // Return the created order with the sequential ID
     const newOrder: Order = {
       ...orderWithTimestamp,
       id: orderId
@@ -177,14 +179,8 @@ export const updateOrderStatus = async (orderId: string, status: OrderStatus): P
 // Helper function for creating/updating documents
 const setDoc = async (docRef: any, data: any) => {
   try {
-    // Check if document exists
-    const docSnap = await getDoc(docRef);
-    
-    if (docSnap.exists()) {
-      await updateDoc(docRef, data);
-    } else {
-      await addDoc(collection(db, ORDERS_COLLECTION), data);
-    }
+    // Use Firestore setDoc with merge option
+    await firestoreSetDoc(docRef, data, { merge: true });
   } catch (error) {
     console.error("Error in setDoc:", error);
     throw error;
@@ -291,16 +287,17 @@ export const initializeOrders = async (): Promise<void> => {
       // Get orders from localStorage
       const orders = getOrdersFromLocalStorage();
       
-      // Add all orders to Firestore
-      for (const order of orders) {
-        const { id, ...orderWithoutId } = order;
-        await setDoc(doc(db, ORDERS_COLLECTION, id), orderWithoutId);
-      }
-      console.log("Orders initialized from localStorage");
-      
-      // Initialize order counter
       if (orders.length > 0) {
-        // Extract max order number
+        console.log(`Found ${orders.length} orders in localStorage, uploading to Firestore...`);
+        
+        // Add all orders to Firestore
+        for (const order of orders) {
+          // Use the existing order ID
+          await firestoreSetDoc(doc(db, ORDERS_COLLECTION, order.id), order);
+        }
+        console.log("Orders initialized from localStorage");
+        
+        // Initialize order counter
         const orderNumbers = orders
           .map(order => {
             const match = order.id.match(/ORD-(\d+)/);
@@ -310,7 +307,7 @@ export const initializeOrders = async (): Promise<void> => {
         
         if (orderNumbers.length > 0) {
           const maxNumber = Math.max(...orderNumbers);
-          await setDoc(doc(db, COUNTERS_COLLECTION, ORDER_COUNTER_ID), { value: maxNumber });
+          await firestoreSetDoc(doc(db, COUNTERS_COLLECTION, ORDER_COUNTER_ID), { value: maxNumber });
         }
       }
     }

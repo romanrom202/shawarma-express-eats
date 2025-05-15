@@ -4,7 +4,7 @@ import { auth, db } from "@/lib/firebase";
 import { createOrUpdateUser } from "./firebaseUserService";
 import { initializeProducts } from "./firebaseProductService";
 import { initializeOrders } from "./firebaseOrderService";
-import { doc, getDoc, setDoc } from "firebase/firestore";
+import { doc, getDoc, setDoc, collection, getDocs } from "firebase/firestore";
 
 // Initialize all Firebase services
 export const initializeFirebaseServices = async () => {
@@ -47,6 +47,7 @@ export const initializeAuthListener = () => {
   return onAuthStateChanged(auth, async (user) => {
     if (user) {
       try {
+        // When user logs in, create or update their profile
         await createOrUpdateUser(user);
       } catch (error) {
         console.error("Error in auth listener:", error);

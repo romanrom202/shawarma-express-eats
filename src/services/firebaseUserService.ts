@@ -25,10 +25,13 @@ export const createOrUpdateUser = async (user: User): Promise<UserProfile> => {
     
     if (!userSnap.exists()) {
       // Create new user profile
+      // Use display name from auth user, or extract from email
+      const displayName = user.displayName || (user.email ? user.email.split('@')[0] : 'Користувач');
+      
       const newUser: UserProfile = {
         uid: user.uid,
         email: user.email,
-        displayName: user.displayName || user.email?.split('@')[0] || 'Користувач',
+        displayName: displayName,
         address: null,
         phone: null,
         createdAt: now,
@@ -40,15 +43,23 @@ export const createOrUpdateUser = async (user: User): Promise<UserProfile> => {
     } else {
       // Update existing user's last login
       const existingUser = userSnap.data() as UserProfile;
-      await updateDoc(userRef, {
+      
+      // Update with current display name if user object has one
+      const updates: Partial<UserProfile> = {
         lastLoginAt: now,
-        email: user.email // Update email in case it changed
-      });
+        email: user.email
+      };
+      
+      // Only update display name if the user has one in auth
+      if (user.displayName) {
+        updates.displayName = user.displayName;
+      }
+      
+      await updateDoc(userRef, updates);
       
       return {
         ...existingUser,
-        lastLoginAt: now,
-        email: user.email
+        ...updates
       };
     }
   } catch (error) {

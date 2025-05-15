@@ -75,7 +75,10 @@ export const AuthProvider: React.FC<React.PropsWithChildren> = ({ children }) =>
             await updateProfile(result.user, { displayName: name });
             
             // Also update the Firestore profile
-            await createOrUpdateUser(result.user);
+            await createOrUpdateUser({
+                ...result.user,
+                displayName: name
+            });
         }
     };
 

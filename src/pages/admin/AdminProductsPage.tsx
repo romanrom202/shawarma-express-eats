@@ -1,10 +1,8 @@
-
 import React, { useState, useEffect } from 'react';
 import AdminLayout from '@/components/layouts/AdminLayout';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Edit, Trash2, Plus, Search, Save, X } from 'lucide-react';
-import { products as initialProducts } from '@/data/products';
 import { 
   Dialog, 
   DialogContent, 
@@ -18,9 +16,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useToast } from '@/components/ui/use-toast';
 import { Product } from '@/components/ui/ProductCard';
-
-// Ключ для хранения товаров в localStorage
-const PRODUCTS_STORAGE_KEY = "shawarma_timaro_products";
+import { getAllProducts, addProduct, updateProduct, deleteProduct } from '@/services/firebaseProductService';
 
 const AdminProductsPage: React.FC = () => {
   const [products, setProducts] = useState<Product[]>([]);
@@ -35,49 +31,60 @@ const AdminProductsPage: React.FC = () => {
     imageUrl: '',
     category: 'Шаурма',
   });
+  const [loading, setLoading] = useState(true);
   const { toast } = useToast();
   
   const categories = ['Шаурма', 'Напої', 'Снеки', 'Десерти'];
 
-  // Загрузка товаров из localStorage при монтировании
+  // Load products from Firebase
   useEffect(() => {
-    const savedProducts = localStorage.getItem(PRODUCTS_STORAGE_KEY);
-    if (savedProducts) {
+    const loadProducts = async () => {
+      setLoading(true);
       try {
-        const parsedProducts = JSON.parse(savedProducts) as Product[];
-        setProducts(parsedProducts);
+        const firebaseProducts = await getAllProducts();
+        setProducts(firebaseProducts);
+        setLoading(false);
       } catch (error) {
         console.error('Помилка при завантаженні товарів:', error);
-        // Если ошибка загрузки из localStorage, используем начальные товары
-        setProducts(initialProducts);
+        toast({
+          title: "Помилка завантаження",
+          description: "Не вдалося завантажити товари",
+          variant: "destructive"
+        });
+        setLoading(false);
       }
-    } else {
-      // Если в localStorage нет товаров, используем начальные товары
-      setProducts(initialProducts);
-      // И сразу сохраняем их в localStorage
-      localStorage.setItem(PRODUCTS_STORAGE_KEY, JSON.stringify(initialProducts));
-    }
-  }, []);
+    };
+    
+    loadProducts();
+  }, [toast]);
 
-  // Фильтруем товары по поисковому запросу
+  // Filter products by search term
   const filteredProducts = products.filter(product => 
     product.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
     product.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
     product.category.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  const handleDeleteProduct = (productId: number) => {
-    // Удаляем товар из состояния
-    const updatedProducts = products.filter(product => product.id !== productId);
-    setProducts(updatedProducts);
-    
-    // Сохраняем обновленный список в localStorage
-    localStorage.setItem(PRODUCTS_STORAGE_KEY, JSON.stringify(updatedProducts));
-    
-    toast({
-      title: "Товар видалено",
-      description: "Товар було успішно видалено з меню",
-    });
+  const handleDeleteProduct = async (productId: number) => {
+    try {
+      await deleteProduct(productId);
+      
+      // Update local state
+      const updatedProducts = products.filter(product => product.id !== productId);
+      setProducts(updatedProducts);
+      
+      toast({
+        title: "Товар видалено",
+        description: "Товар було успішно видалено з меню",
+      });
+    } catch (error) {
+      console.error('Помилка при видаленні товару:', error);
+      toast({
+        title: "Помилка",
+        description: "Не вдалося видалити товар",
+        variant: "destructive"
+      });
+    }
   };
 
   const handleEditProduct = (product: Product) => {
@@ -85,32 +92,40 @@ const AdminProductsPage: React.FC = () => {
     setIsEditDialogOpen(true);
   };
 
-  const handleUpdateProduct = () => {
+  const handleUpdateProduct = async () => {
     if (!currentProduct) return;
     
-    // Находим индекс товара в массиве
-    const productIndex = products.findIndex(p => p.id === currentProduct.id);
-    if (productIndex === -1) return;
-    
-    // Создаем обновленный массив товаров
-    const updatedProducts = [...products];
-    updatedProducts[productIndex] = currentProduct;
-    
-    // Обновляем состояние и localStorage
-    setProducts(updatedProducts);
-    localStorage.setItem(PRODUCTS_STORAGE_KEY, JSON.stringify(updatedProducts));
-    
-    // Закрываем диалог и сбрасываем выбранный товар
-    setIsEditDialogOpen(false);
-    setCurrentProduct(null);
-    
-    toast({
-      title: "Товар оновлено",
-      description: "Товар було успішно оновлено",
-    });
+    try {
+      // Update product in Firebase
+      const updatedProduct = await updateProduct(currentProduct.id, currentProduct);
+      
+      // Update local state
+      const productIndex = products.findIndex(p => p.id === currentProduct.id);
+      if (productIndex !== -1) {
+        const updatedProducts = [...products];
+        updatedProducts[productIndex] = updatedProduct;
+        setProducts(updatedProducts);
+      }
+      
+      // Close dialog and reset state
+      setIsEditDialogOpen(false);
+      setCurrentProduct(null);
+      
+      toast({
+        title: "Товар оновлено",
+        description: "Товар було успішно оновлено",
+      });
+    } catch (error) {
+      console.error('Помилка при оновленні товару:', error);
+      toast({
+        title: "Помилка",
+        description: "Не вдалося оновити товар",
+        variant: "destructive"
+      });
+    }
   };
 
-  const handleAddProduct = () => {
+  const handleAddProduct = async () => {
     if (!newProduct.name || !newProduct.description || !newProduct.price || !newProduct.imageUrl) {
       toast({
         title: "Помилка",
@@ -120,35 +135,40 @@ const AdminProductsPage: React.FC = () => {
       return;
     }
 
-    // Создаем новый ID (максимальный ID + 1)
-    const newId = Math.max(...products.map(p => p.id), 0) + 1;
-    const productToAdd = {
-      ...newProduct,
-      id: newId,
-      price: Number(newProduct.price)
-    } as Product;
-    
-    // Добавляем товар в состояние
-    const updatedProducts = [...products, productToAdd];
-    setProducts(updatedProducts);
-    
-    // Сохраняем обновленный список в localStorage
-    localStorage.setItem(PRODUCTS_STORAGE_KEY, JSON.stringify(updatedProducts));
-    
-    // Закрываем диалог и сбрасываем форму
-    setIsAddDialogOpen(false);
-    setNewProduct({
-      name: '',
-      description: '',
-      price: 0,
-      imageUrl: '',
-      category: 'Шаурма',
-    });
-    
-    toast({
-      title: "Товар додано",
-      description: "Новий товар було успішно додано до меню",
-    });
+    try {
+      // Add product to Firebase
+      const productToAdd = {
+        ...newProduct,
+        price: Number(newProduct.price)
+      } as Omit<Product, 'id'>;
+      
+      const addedProduct = await addProduct(productToAdd);
+      
+      // Update local state
+      setProducts([...products, addedProduct]);
+      
+      // Reset form and close dialog
+      setIsAddDialogOpen(false);
+      setNewProduct({
+        name: '',
+        description: '',
+        price: 0,
+        imageUrl: '',
+        category: 'Шаурма',
+      });
+      
+      toast({
+        title: "Товар додано",
+        description: "Новий товар було успішно додано до меню",
+      });
+    } catch (error) {
+      console.error('Помилка при додаванні товару:', error);
+      toast({
+        title: "Помилка",
+        description: "Не вдалося додати товар",
+        variant: "destructive"
+      });
+    }
   };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -211,83 +231,91 @@ const AdminProductsPage: React.FC = () => {
           </div>
         </div>
 
-        <div className="overflow-x-auto">
-          <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
-              <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-text-light uppercase tracking-wider">
-                  Товар
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-text-light uppercase tracking-wider">
-                  Категорія
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-text-light uppercase tracking-wider">
-                  Ціна
-                </th>
-                <th className="px-6 py-3 text-right text-xs font-medium text-text-light uppercase tracking-wider">
-                  Дії
-                </th>
-              </tr>
-            </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
-              {filteredProducts.map((product) => (
-                <tr key={product.id} className="hover:bg-gray-50">
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="flex items-center">
-                      <div className="h-10 w-10 flex-shrink-0">
-                        <img className="h-10 w-10 rounded-md object-cover" src={product.imageUrl} alt={product.name} />
-                      </div>
-                      <div className="ml-4">
-                        <div className="font-medium text-gray-900">{product.name}</div>
-                        <div className="text-sm text-gray-500 truncate max-w-xs">{product.description}</div>
-                      </div>
-                    </div>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
-                      {product.category}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    {product.price} ₴
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                    <div className="flex justify-end space-x-2">
-                      <Button 
-                        variant="ghost" 
-                        size="sm" 
-                        onClick={() => handleEditProduct(product)}
-                      >
-                        <Edit className="h-4 w-4" />
-                      </Button>
-                      <Button 
-                        variant="ghost" 
-                        size="sm" 
-                        className="text-red-500"
-                        onClick={() => handleDeleteProduct(product.id)}
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  </td>
-                </tr>
-              ))}
-              {filteredProducts.length === 0 && (
-                <tr>
-                  <td colSpan={4} className="px-6 py-4 text-center text-text-light">
-                    Товари не знайдені
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
-        </div>
+        {loading ? (
+          <div className="flex justify-center items-center py-8">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+          </div>
+        ) : (
+          <>
+            <div className="overflow-x-auto">
+              <table className="min-w-full divide-y divide-gray-200">
+                <thead className="bg-gray-50">
+                  <tr>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-text-light uppercase tracking-wider">
+                      Товар
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-text-light uppercase tracking-wider">
+                      Категорія
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-text-light uppercase tracking-wider">
+                      Ціна
+                    </th>
+                    <th className="px-6 py-3 text-right text-xs font-medium text-text-light uppercase tracking-wider">
+                      Дії
+                    </th>
+                  </tr>
+                </thead>
+                <tbody className="bg-white divide-y divide-gray-200">
+                  {filteredProducts.map((product) => (
+                    <tr key={product.id} className="hover:bg-gray-50">
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div className="flex items-center">
+                          <div className="h-10 w-10 flex-shrink-0">
+                            <img className="h-10 w-10 rounded-md object-cover" src={product.imageUrl} alt={product.name} />
+                          </div>
+                          <div className="ml-4">
+                            <div className="font-medium text-gray-900">{product.name}</div>
+                            <div className="text-sm text-gray-500 truncate max-w-xs">{product.description}</div>
+                          </div>
+                        </div>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                          {product.category}
+                        </span>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        {product.price} ₴
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                        <div className="flex justify-end space-x-2">
+                          <Button 
+                            variant="ghost" 
+                            size="sm" 
+                            onClick={() => handleEditProduct(product)}
+                          >
+                            <Edit className="h-4 w-4" />
+                          </Button>
+                          <Button 
+                            variant="ghost" 
+                            size="sm" 
+                            className="text-red-500"
+                            onClick={() => handleDeleteProduct(product.id)}
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                  {filteredProducts.length === 0 && (
+                    <tr>
+                      <td colSpan={4} className="px-6 py-4 text-center text-text-light">
+                        Товари не знайдені
+                      </td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
 
-        <div className="bg-gray-50 px-6 py-4 border-t border-gray-200">
-          <p className="text-sm text-text-light">
-            Всього товарів: {filteredProducts.length}
-          </p>
-        </div>
+            <div className="bg-gray-50 px-6 py-4 border-t border-gray-200">
+              <p className="text-sm text-text-light">
+                Всього товарів: {filteredProducts.length}
+              </p>
+            </div>
+          </>
+        )}
       </div>
 
       {/* Dialog for adding new product */}
