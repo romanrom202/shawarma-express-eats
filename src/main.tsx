@@ -1,14 +1,35 @@
-import React from 'react';
+
+import React, { useEffect } from 'react';
 import { createRoot } from 'react-dom/client';
 import App from './App';
 import './index.css';
 
-// Импортируем провайдер аутентификации
+// Import providers
 import { AuthProvider } from '@/hooks/useAuth';
+import { CartProvider } from '@/hooks/useCart';
 
-// Рендерим корневой компонент внутри AuthProvider
-createRoot(document.getElementById('root')!).render(
+// Import initialization service
+import { initializeFirebaseServices } from '@/services/firebaseInitService';
+
+// Create a wrapper component to initialize Firebase
+const AppWithFirebase = () => {
+  useEffect(() => {
+    // Initialize Firebase services
+    initializeFirebaseServices();
+  }, []);
+
+  return (
     <AuthProvider>
+      <CartProvider>
         <App />
+      </CartProvider>
     </AuthProvider>
+  );
+};
+
+// Render the app with Firebase initialization
+createRoot(document.getElementById('root')!).render(
+  <React.StrictMode>
+    <AppWithFirebase />
+  </React.StrictMode>
 );
