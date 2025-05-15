@@ -4,7 +4,7 @@ import { auth, db } from "@/lib/firebase";
 import { createOrUpdateUser } from "./firebaseUserService";
 import { initializeProducts } from "./firebaseProductService";
 import { initializeOrders } from "./firebaseOrderService";
-import { doc, getDoc, setDoc, collection, getDocs } from "firebase/firestore";
+import { doc, getDoc, setDoc, collection, getDocs, serverTimestamp } from "firebase/firestore";
 
 // Initialize all Firebase services
 export const initializeFirebaseServices = async () => {
@@ -34,8 +34,13 @@ const initializeCounters = async () => {
     
     if (!counterSnap.exists()) {
       // Initialize with starting value
-      await setDoc(counterRef, { value: 32800 });
+      await setDoc(counterRef, { 
+        value: 32800,
+        updatedAt: serverTimestamp()
+      });
       console.log("Order counter initialized");
+    } else {
+      console.log("Order counter already exists with value:", counterSnap.data().value);
     }
   } catch (error) {
     console.error("Error initializing counters:", error);
@@ -44,14 +49,18 @@ const initializeCounters = async () => {
 
 // Listen for auth state changes to create/update user profiles
 export const initializeAuthListener = () => {
+  console.log("Setting up auth listener");
   return onAuthStateChanged(auth, async (user) => {
     if (user) {
+      console.log("Auth state changed, user logged in:", user.displayName || user.email);
       try {
         // When user logs in, create or update their profile
         await createOrUpdateUser(user);
       } catch (error) {
         console.error("Error in auth listener:", error);
       }
+    } else {
+      console.log("Auth state changed, user logged out");
     }
   });
 };

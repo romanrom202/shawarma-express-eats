@@ -42,8 +42,12 @@ export const AuthProvider: React.FC<React.PropsWithChildren> = ({ children }) =>
             
             if (u) {
                 try {
+                    console.log("Auth state changed, user logged in:", u.displayName);
+                    
                     // Create or update the user profile in Firestore
                     const profile = await createOrUpdateUser(u);
+                    console.log("Loaded user profile:", profile);
+                    
                     setUserProfile({
                         displayName: profile.displayName,
                         address: profile.address,
@@ -58,6 +62,7 @@ export const AuthProvider: React.FC<React.PropsWithChildren> = ({ children }) =>
                     });
                 }
             } else {
+                console.log("Auth state changed, user logged out");
                 setUserProfile(null);
             }
             
@@ -68,11 +73,13 @@ export const AuthProvider: React.FC<React.PropsWithChildren> = ({ children }) =>
     }, []);
 
     const register = async (email: string, pass: string, name?: string) => {
+        console.log("Registering user:", email, "with name:", name);
         const result = await createUserWithEmailAndPassword(auth, email, pass);
         
         // Set display name if provided
         if (name && result.user) {
             await updateProfile(result.user, { displayName: name });
+            console.log("Display name set for new user:", name);
             
             // Also update the Firestore profile
             await createOrUpdateUser({
@@ -83,19 +90,26 @@ export const AuthProvider: React.FC<React.PropsWithChildren> = ({ children }) =>
     };
 
     const login = (email: string, pass: string) =>
-        signInWithEmailAndPassword(auth, email, pass).then(() => {});
+        signInWithEmailAndPassword(auth, email, pass).then(() => {
+            console.log("User logged in:", email);
+        });
 
     const loginWithGoogle = () =>
-        signInWithPopup(auth, new GoogleAuthProvider()).then(() => {});
+        signInWithPopup(auth, new GoogleAuthProvider()).then(() => {
+            console.log("User logged in with Google");
+        });
 
     const logoutUser = () => signOut(auth);
 
     const updateUserData = async (data: { displayName?: string; address?: string; phone?: string }) => {
         if (!user) return;
         
+        console.log("Updating user data:", data);
+        
         // Update Firebase Auth display name if provided
         if (data.displayName && data.displayName !== user.displayName) {
             await updateProfile(user, { displayName: data.displayName });
+            console.log("Updated Firebase Auth display name:", data.displayName);
         }
         
         // Update user profile in Firestore
@@ -116,6 +130,8 @@ export const AuthProvider: React.FC<React.PropsWithChildren> = ({ children }) =>
             
             // Refresh the user
             await user.reload();
+            
+            console.log("User data updated successfully");
         } catch (error) {
             console.error("Error updating user data:", error);
             throw error;

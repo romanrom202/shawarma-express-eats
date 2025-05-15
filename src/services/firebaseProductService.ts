@@ -1,6 +1,6 @@
 
 import { db, storage } from "@/lib/firebase";
-import { collection, doc, getDocs, getDoc, addDoc, updateDoc, deleteDoc, query, where } from "firebase/firestore";
+import { collection, doc, getDocs, getDoc, addDoc, updateDoc, deleteDoc, query, where, setDoc } from "firebase/firestore";
 import { ref, uploadBytes, getDownloadURL, deleteObject } from "firebase/storage";
 import { Product } from "@/components/ui/ProductCard";
 
@@ -10,10 +10,24 @@ const PRODUCTS_COLLECTION = "products";
 export const getAllProducts = async (): Promise<Product[]> => {
   try {
     const querySnapshot = await getDocs(collection(db, PRODUCTS_COLLECTION));
-    return querySnapshot.docs.map(doc => ({
-      id: parseInt(doc.id),
-      ...doc.data()
-    } as Product));
+    const products = querySnapshot.docs.map(doc => {
+      const data = doc.data();
+      return {
+        id: parseInt(doc.id) || doc.id, // Handle both numeric and string IDs
+        name: data.name,
+        description: data.description,
+        price: data.price,
+        imageUrl: data.imageUrl,
+        category: data.category
+      } as Product;
+    });
+    
+    console.log("Products loaded from Firebase:", products);
+    
+    // Save to localStorage for offline access
+    localStorage.setItem("shawarma_timaro_products", JSON.stringify(products));
+    
+    return products;
   } catch (error) {
     console.error("Error getting products:", error);
     // Fallback to local storage if Firebase fails
@@ -46,6 +60,8 @@ export const getProductById = async (productId: number): Promise<Product | null>
 // Add new product
 export const addProduct = async (product: Omit<Product, 'id'>, imageFile?: File): Promise<Product> => {
   try {
+    console.log("Adding product:", product);
+    
     // If there's an image file, upload it first
     let imageUrl = product.imageUrl;
     
@@ -55,13 +71,26 @@ export const addProduct = async (product: Omit<Product, 'id'>, imageFile?: File)
       imageUrl = await getDownloadURL(storageRef);
     }
     
-    // Add the product to Firestore
-    const productWithImage = { ...product, imageUrl };
-    const docRef = await addDoc(collection(db, PRODUCTS_COLLECTION), productWithImage);
+    // Generate a numeric ID for the new product
+    const productsSnapshot = await getDocs(collection(db, PRODUCTS_COLLECTION));
+    const existingIds = productsSnapshot.docs
+      .map(doc => parseInt(doc.id))
+      .filter(id => !isNaN(id));
+    
+    const newId = existingIds.length > 0 ? Math.max(...existingIds) + 1 : 1;
+    
+    // Add the product to Firestore with explicit ID
+    const productWithImage = { 
+      ...product, 
+      imageUrl 
+    };
+    
+    // Use setDoc with explicit ID instead of addDoc
+    await setDoc(doc(db, PRODUCTS_COLLECTION, newId.toString()), productWithImage);
     
     // Return the created product with id
     const newProduct = {
-      id: parseInt(docRef.id),
+      id: newId,
       ...productWithImage
     } as Product;
     
@@ -71,7 +100,11 @@ export const addProduct = async (product: Omit<Product, 'id'>, imageFile?: File)
       const products = JSON.parse(savedProducts) as Product[];
       products.push(newProduct);
       localStorage.setItem("shawarma_timaro_products", JSON.stringify(products));
+    } else {
+      localStorage.setItem("shawarma_timaro_products", JSON.stringify([newProduct]));
     }
+    
+    console.log("Product added successfully:", newProduct);
     
     return newProduct;
   } catch (error) {
@@ -83,26 +116,22 @@ export const addProduct = async (product: Omit<Product, 'id'>, imageFile?: File)
 // Update product
 export const updateProduct = async (productId: number, product: Partial<Product>, imageFile?: File): Promise<Product> => {
   try {
+    console.log("Updating product:", productId, product);
     const productRef = doc(db, PRODUCTS_COLLECTION, productId.toString());
     let updateData = { ...product };
     
-    // If there's a new image file, upload it and update the URL
+    // If there's a new image file, upload it
     if (imageFile) {
-      // Delete old image if it exists and is from Storage (contains Firebase URL pattern)
-      if (product.imageUrl && product.imageUrl.includes("firebasestorage")) {
-        try {
-          const oldImageRef = ref(storage, product.imageUrl);
-          await deleteObject(oldImageRef);
-        } catch (e) {
-          console.log("No previous image to delete or error deleting");
-        }
+      try {
+        // Upload new image
+        const storageRef = ref(storage, `products/${Date.now()}_${imageFile.name}`);
+        await uploadBytes(storageRef, imageFile);
+        const newImageUrl = await getDownloadURL(storageRef);
+        updateData.imageUrl = newImageUrl;
+      } catch (e) {
+        console.error("Error uploading new image:", e);
+        // Continue without changing the image
       }
-      
-      // Upload new image
-      const storageRef = ref(storage, `products/${Date.now()}_${imageFile.name}`);
-      await uploadBytes(storageRef, imageFile);
-      const newImageUrl = await getDownloadURL(storageRef);
-      updateData.imageUrl = newImageUrl;
     }
     
     // Update Firestore
@@ -126,6 +155,8 @@ export const updateProduct = async (productId: number, product: Partial<Product>
       }
     }
     
+    console.log("Product updated successfully:", updatedProduct);
+    
     return updatedProduct;
   } catch (error) {
     console.error("Error updating product:", error);
@@ -136,23 +167,6 @@ export const updateProduct = async (productId: number, product: Partial<Product>
 // Delete product
 export const deleteProduct = async (productId: number): Promise<void> => {
   try {
-    // Get the product to check if we need to delete an image
-    const productDoc = await getDoc(doc(db, PRODUCTS_COLLECTION, productId.toString()));
-    
-    if (productDoc.exists()) {
-      const product = productDoc.data();
-      
-      // Delete the image if it's from Firebase Storage
-      if (product.imageUrl && product.imageUrl.includes("firebasestorage")) {
-        try {
-          const imageRef = ref(storage, product.imageUrl);
-          await deleteObject(imageRef);
-        } catch (e) {
-          console.log("Error deleting image or image not found");
-        }
-      }
-    }
-    
     // Delete the product document
     await deleteDoc(doc(db, PRODUCTS_COLLECTION, productId.toString()));
     
@@ -163,6 +177,8 @@ export const deleteProduct = async (productId: number): Promise<void> => {
       const updatedProducts = products.filter(p => p.id !== productId);
       localStorage.setItem("shawarma_timaro_products", JSON.stringify(updatedProducts));
     }
+    
+    console.log("Product deleted successfully:", productId);
   } catch (error) {
     console.error("Error deleting product:", error);
     throw new Error("Failed to delete product");
@@ -180,13 +196,15 @@ export const initializeProducts = async (): Promise<void> => {
       if (savedProducts) {
         const products = JSON.parse(savedProducts) as Product[];
         
-        // Add all products to Firestore
+        // Add all products to Firestore with their IDs preserved
         for (const product of products) {
           const { id, ...productWithoutId } = product;
-          await addDoc(collection(db, PRODUCTS_COLLECTION), productWithoutId);
+          await setDoc(doc(db, PRODUCTS_COLLECTION, id.toString()), productWithoutId);
         }
         console.log("Products initialized from localStorage");
       }
+    } else {
+      console.log("Products collection already exists in Firestore");
     }
   } catch (error) {
     console.error("Error initializing products:", error);

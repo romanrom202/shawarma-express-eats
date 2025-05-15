@@ -25,8 +25,10 @@ export const createOrUpdateUser = async (user: User): Promise<UserProfile> => {
     
     if (!userSnap.exists()) {
       // Create new user profile
-      // Use display name from auth user, or extract from email
-      const displayName = user.displayName || (user.email ? user.email.split('@')[0] : 'Користувач');
+      // Prioritize displayName from auth, don't fallback to email prefix
+      const displayName = user.displayName || null;
+      
+      console.log("Creating new user profile with display name:", displayName);
       
       const newUser: UserProfile = {
         uid: user.uid,
@@ -45,15 +47,19 @@ export const createOrUpdateUser = async (user: User): Promise<UserProfile> => {
       const existingUser = userSnap.data() as UserProfile;
       
       // Update with current display name if user object has one
+      // but DO NOT overwrite existing displayName with email prefix
       const updates: Partial<UserProfile> = {
         lastLoginAt: now,
         email: user.email
       };
       
-      // Only update display name if the user has one in auth
-      if (user.displayName) {
+      // Only update display name if the user has one in auth 
+      // AND it's different from the stored one AND it's not null
+      if (user.displayName && user.displayName !== existingUser.displayName) {
         updates.displayName = user.displayName;
       }
+      
+      console.log("Updating existing user profile:", updates);
       
       await updateDoc(userRef, updates);
       
@@ -91,6 +97,7 @@ export const updateUserProfile = async (
   updates: Partial<Omit<UserProfile, 'uid' | 'email' | 'createdAt' | 'lastLoginAt'>>
 ): Promise<UserProfile | null> => {
   try {
+    console.log("Updating user profile:", uid, updates);
     const userRef = doc(db, USERS_COLLECTION, uid);
     await updateDoc(userRef, updates);
     

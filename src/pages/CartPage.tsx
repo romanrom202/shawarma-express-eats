@@ -328,7 +328,7 @@ const CartPage: React.FC = () => {
                           variant="outline"
                           onClick={() => setIsCheckingOut(false)}
                         >
-                          П��вернутися до кошика
+                          Повернутися до кошика
                         </Button>
                       </div>
                     </div>
