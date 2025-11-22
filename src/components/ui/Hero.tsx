@@ -27,7 +27,7 @@ const Hero: React.FC = () => {
           <div className="md:w-1/2 relative">
             <div className="relative w-full h-64 md:h-80 lg:h-96">
               <img 
-                src="https://images.unsplash.com/photo-1530469912745-a215c6b256ea?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80" 
+                src="/hero-shawarma.png" 
                 alt="Шаурма" 
                 className="w-full h-full object-cover rounded-lg shadow-2xl"
               />
