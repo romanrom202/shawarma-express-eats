@@ -84,11 +84,10 @@ const AboutPage: React.FC = () => {
           <p className="text-text-light mb-8 text-center max-w-2xl mx-auto">
             Команда ТиМаРо — це дружня родина професіоналів своєї справи, які щодня працюють, щоб дарувати вам найкращі враження від східної кухні.
           </p>
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-8">
             {[
               {name: "Роман Горбачов", role: "Засновник і технічний директор", image: "/founders/roman.jpg"},
-              {name: "Тимофій Білецький", role: "Засновник і директор з розвитку та маркетингу", image: "/founders/timofii.jpg"},
-              {name: "Максим Гладкоскок", role: "Засновник і операційний директор", image: "/founders/maksim.jpg"}
+              {name: "Тимофій Білецький", role: "Засновник і директор з розвитку та маркетингу", image: "/founders/timofii.jpg"}
             ].map((member, index) => (
               <div key={index} className="text-center">
                 <div className="w-32 h-32 mx-auto rounded-full overflow-hidden mb-4">
