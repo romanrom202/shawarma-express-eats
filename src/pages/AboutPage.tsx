@@ -1,11 +1,8 @@
-
 import React from 'react';
 import MainLayout from '@/components/layouts/MainLayout';
 import { Separator } from "@/components/ui/separator";
-
 const AboutPage: React.FC = () => {
-  return (
-    <MainLayout>
+  return <MainLayout>
       <div className="container mx-auto px-4 py-12">
         <div className="max-w-4xl mx-auto">
           <h1 className="text-4xl font-bold mb-6 text-text">Про нас</h1>
@@ -13,16 +10,12 @@ const AboutPage: React.FC = () => {
           
           <div className="flex flex-col md:flex-row gap-10 mb-12">
             <div className="md:w-1/2">
-              <img 
-                src="/founders/team.jpg"
-                alt="Наша команда" 
-                className="rounded-lg shadow-md w-full h-auto"
-              />
+              <img src="/founders/team.jpg" alt="Наша команда" className="rounded-lg shadow-md w-full h-auto" />
             </div>
             <div className="md:w-1/2">
               <h2 className="text-2xl font-bold mb-4 text-text">Наша історія</h2>
               <p className="text-text-light mb-4">
-                Шаурма ТиМаРо заснована у 2025 році трьома друзями, які мали спільну мрію — принести автентичний смак східної кухні до України.
+                Шаурма ТиМаРо заснована у 2025 році двома друзями, які мали спільну мрію — принести автентичний смак східної кухні до України.
               </p>
               <p className="text-text-light mb-4">
                 Сьогодні мережа ТиМаРо налічує 1 заклад у Києві, і ми продовжуємо розширюватися. Наша місія залишається незмінною — готувати найсмачнішу шаурму з найсвіжіших інгредієнтів.
@@ -72,11 +65,7 @@ const AboutPage: React.FC = () => {
               </p>
             </div>
             <div className="md:w-1/2">
-              <img 
-                src="/kitchen.png"
-                alt="Наша кухня" 
-                className="rounded-lg shadow-md w-full h-auto"
-              />
+              <img src="/kitchen.png" alt="Наша кухня" className="rounded-lg shadow-md w-full h-auto" />
             </div>
           </div>
           
@@ -85,27 +74,24 @@ const AboutPage: React.FC = () => {
             Команда ТиМаРо — це дружня родина професіоналів своєї справи, які щодня працюють, щоб дарувати вам найкращі враження від східної кухні.
           </p>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-8">
-            {[
-              {name: "Роман Горбачов", role: "Засновник і технічний директор", image: "/founders/roman.jpg"},
-              {name: "Тимофій Білецький", role: "Засновник і директор з розвитку та маркетингу", image: "/founders/timofii.jpg"}
-            ].map((member, index) => (
-              <div key={index} className="text-center">
+            {[{
+            name: "Роман Горбачов",
+            role: "Засновник і технічний директор",
+            image: "/founders/roman.jpg"
+          }, {
+            name: "Тимофій Білецький",
+            role: "Засновник і директор з розвитку та маркетингу",
+            image: "/founders/timofii.jpg"
+          }].map((member, index) => <div key={index} className="text-center">
                 <div className="w-32 h-32 mx-auto rounded-full overflow-hidden mb-4">
-                  <img 
-                    src={member.image} 
-                    alt={member.name} 
-                    className="w-full h-full object-cover"
-                  />
+                  <img src={member.image} alt={member.name} className="w-full h-full object-cover" />
                 </div>
                 <h3 className="font-bold mb-1">{member.name}</h3>
                 <p className="text-text-light text-sm">{member.role}</p>
-              </div>
-            ))}
+              </div>)}
           </div>
         </div>
       </div>
-    </MainLayout>
-  );
+    </MainLayout>;
 };
-
 export default AboutPage;
